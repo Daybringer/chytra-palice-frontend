@@ -1,6 +1,6 @@
 <template>
   <div class="container mt-4">
-    <post-form :id="id" :type="'edit'"> </post-form>
+    <post-form :id="id" :type="'edit'"></post-form>
   </div>
 </template>
 
@@ -18,4 +18,4 @@ export default {
 };
 </script>
 
-<style></style>
+<style scoped></style>

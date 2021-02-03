@@ -17,23 +17,6 @@ export default {
 };
 </script>
 <style lang="scss">
-.content-wrap {
-  min-height: 100vh;
-  padding-bottom: 6rem;
-}
-.custom-footer {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  height: 6rem;
-  position: absolute;
-  bottom: 0;
-  width: 100%;
-}
-#app {
-  min-height: 100vh;
-  position: relative;
-}
 html,
 body {
   margin: 0;

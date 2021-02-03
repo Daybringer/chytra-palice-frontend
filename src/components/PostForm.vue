@@ -18,18 +18,20 @@
         v-model="content"
         class="block"
       ></vue-editor>
+
       <button class="button block">Save post</button>
     </form>
   </div>
 </template>
 
 <script>
+// Components
 import { VueEditor } from "vue2-editor";
 export default {
   name: "CreatePostFormular",
   props: {
-    type: String, //create | edit
-    id: String,
+    type: String, // 'create' || 'edit'
+    id: String, // when type === edit: id of post
   },
   components: { VueEditor },
   data() {
@@ -61,6 +63,7 @@ export default {
         });
       }
 
+      // TODO implement some sort of user feedback e.g. green box with a thick tick
       this.title = "";
       this.content = "";
     },
@@ -75,4 +78,4 @@ export default {
 };
 </script>
 
-<style></style>
+<style scoped></style>

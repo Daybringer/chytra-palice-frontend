@@ -16,7 +16,7 @@
 <script>
 export default {
   name: "EditDeleteModal",
-  props: ["id"],
+  props: { id: Number },
   methods: {
     removePost() {
       this.$store.dispatch("removePost", this.id);
@@ -29,4 +29,4 @@ export default {
 };
 </script>
 
-<style></style>
+<style scoped></style>

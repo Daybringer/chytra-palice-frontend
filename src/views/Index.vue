@@ -20,7 +20,6 @@ export default {
   name: "Index",
   computed: {
     posts() {
-      console.log(this.$store.getters.getPosts);
       return this.$store.getters.getPosts;
     },
   },

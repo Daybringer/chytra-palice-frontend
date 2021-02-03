@@ -5,7 +5,6 @@ const state = () => ({
   posts: JSON.parse(window.localStorage.getItem("posts")) || [],
 });
 
-// getters
 const getters = {
   isLoggedIn: (state) => {
     return state.loggedIn;
@@ -29,7 +28,6 @@ const getters = {
   },
 };
 
-// actions
 const actions = {
   savePosts({ state }) {
     window.localStorage.setItem("posts", JSON.stringify(state.posts));
@@ -39,10 +37,10 @@ const actions = {
     dispatch("savePosts");
   },
   logOut({ commit }) {
-    commit("flush");
+    commit("logOut");
   },
   logIn({ commit }) {
-    commit("login");
+    commit("logIn");
   },
   deleteAllPosts({ commit, dispatch }) {
     commit("deleteAllPosts");
@@ -50,10 +48,10 @@ const actions = {
   },
   editPost({ dispatch, commit, getters }, post) {
     const { id, title, content } = post;
+    // Object copy <= Can't change original object outside of mutations
     const oldPost = JSON.parse(JSON.stringify(getters.getPostByID(id)));
-    console.log(oldPost);
-    oldPost.title = title;
-    oldPost.content = content;
+    oldPost.title = title.trim();
+    oldPost.content = content.trim();
     commit("editPost", oldPost);
     dispatch("savePosts");
   },
@@ -61,6 +59,7 @@ const actions = {
     const { content, title } = post;
     const date = new Date();
 
+    // TODO may move this to separate function
     let id;
     const posts = getters.getPosts;
     if (posts.length === 0) {
@@ -82,7 +81,6 @@ const actions = {
   },
 };
 
-// mutations
 const mutations = {
   addPost(state, post) {
     state.posts.push(post);
@@ -106,10 +104,10 @@ const mutations = {
       }
     }
   },
-  flush(state) {
+  logOut(state) {
     state.loggedIn = false;
   },
-  login(state) {
+  logIn(state) {
     state.loggedIn = true;
   },
 };

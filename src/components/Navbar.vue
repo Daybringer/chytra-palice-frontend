@@ -13,6 +13,7 @@
         />
       </b-navbar-item>
     </template>
+    <!-- Left side of navbar -->
     <template #start>
       <b-navbar-item tag="router-link" :to="{ path: '/prace' }">
         Přehled prací
@@ -20,17 +21,9 @@
       <b-navbar-item tag="router-link" :to="{ path: '/souteze' }">
         Soutěže
       </b-navbar-item>
-
-      <!-- <b-navbar-dropdown label="Info">
-        <b-navbar-item href="#">
-          About
-        </b-navbar-item>
-        <b-navbar-item href="#">
-          Contact
-        </b-navbar-item>
-      </b-navbar-dropdown> -->
     </template>
 
+    <!-- Right side of navbar -->
     <template #end>
       <b-navbar-item
         v-if="logged && admin"
@@ -46,6 +39,7 @@
       >
         Nová soutež
       </b-navbar-item>
+      <!-- Login/Logout button  -->
       <b-navbar-item tag="div">
         <div class="buttons">
           <button v-if="!logged" @click="logIn" class="button is-primary">
@@ -59,6 +53,7 @@
     </template>
   </b-navbar>
 </template>
+
 <script>
 export default {
   name: "Navbar",
@@ -80,6 +75,7 @@ export default {
   },
 };
 </script>
+
 <style scoped>
 .logoSVG {
   height: 4rem;

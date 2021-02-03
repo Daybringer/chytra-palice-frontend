@@ -4,8 +4,7 @@
       <h1 class="title has-text-primary">{{ post.title }}</h1>
       <h2 class="subtitle">{{ post.author }}</h2>
       <hr />
-      <div v-if="!error" class="content" v-html="post.content"></div>
-      <h1 v-if="error" class="has-text-danger">Článek neexistuje</h1>
+      <div class="content" v-html="post.content"></div>
     </div>
   </div>
 </template>
@@ -21,20 +20,10 @@ export default {
   },
   methods: {
     loadContent() {
-      const posts = JSON.parse(window.localStorage.getItem("posts"));
-      if (!posts) this.error = true;
-      for (let i = 0; i < posts.length; i++) {
-        if (posts[i].id == this.id) {
-          this.post = posts[i];
-          return;
-        }
-      }
-      this.error = true;
+      this.post = this.$store.getters.getPostByID(this.id);
     },
     setTitle() {
-      document.title =
-        "Chytrá palice - " +
-        (!this.error ? this.post.title : "Článek neexistuje");
+      document.title = `Chytrá palice - ${this.post.title}`;
     },
   },
   computed: {

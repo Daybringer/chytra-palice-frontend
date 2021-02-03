@@ -1,11 +1,11 @@
 <template>
   <div class="container mt-4">
     <div class="buttons">
-      <button class="button is-danger" @click="flushLocal">
-        Clear Local Storage
+      <button class="button is-danger" @click="deletePosts">
+        Delete all posts
       </button>
       <button class="button is-primary" @click="addExamplePost">
-        Add example post
+        Add an example post
       </button>
     </div>
   </div>
@@ -15,7 +15,7 @@
 export default {
   name: "DevPanel",
   methods: {
-    flushLocal() {
+    deletePosts() {
       this.$store.dispatch("deleteAllPosts");
     },
     addExamplePost() {
@@ -28,4 +28,4 @@ export default {
 };
 </script>
 
-<style></style>
+<style scoped></style>

@@ -7,6 +7,7 @@
         <br />
         Licensed under
         <a href="https://opensource.org/licenses/MIT">MIT</a>
+        <!-- TODO remove link to dev -->
         <router-link to="/dev" class="px-2">dev</router-link>
       </p>
     </div>
@@ -19,4 +20,14 @@ export default {
 };
 </script>
 
-<style></style>
+<style scoped>
+.custom-footer {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  height: 6rem;
+  position: absolute;
+  bottom: 0;
+  width: 100%;
+}
+</style>

@@ -1,9 +1,14 @@
 <template>
   <div class="box overlay">
-    <h1 class="title has-text-primary">{{ title }}</h1>
-    <h2 class="subtitle">{{ author }}</h2>
-    <hr />
-    <div class="content" v-html="content"></div>
+    <!-- Post  -->
+    <div>
+      <h1 class="title has-text-primary">{{ title }}</h1>
+      <h2 class="subtitle">{{ author }}</h2>
+      <hr />
+      <div class="content" v-html="content"></div>
+    </div>
+
+    <!-- Link to post panel -->
     <button
       class="read-button button is-primary"
       tag="router-link"
@@ -11,6 +16,8 @@
     >
       Číst dále
     </button>
+
+    <!-- Button to triger edit or close modal -->
     <button
       @click="isComponentModalActive = true"
       v-if="logged && admin"
@@ -20,6 +27,8 @@
         <i class="fas fa-cog"></i>
       </span>
     </button>
+
+    <!-- Edit or close modal -->
     <b-modal
       v-model="isComponentModalActive"
       has-modal-card
@@ -69,7 +78,20 @@ export default {
   },
 };
 </script>
+
 <style scoped>
+.edit-button {
+  position: absolute;
+  top: 0.5rem;
+  right: 1rem;
+}
+
+.read-button {
+  position: absolute;
+  bottom: 0.5rem;
+  right: 1rem;
+}
+
 .overlay {
   position: relative;
   max-height: 50vh !important;
@@ -107,17 +129,5 @@ export default {
   bottom: 0;
   position: absolute;
   width: 100%;
-}
-
-.edit-button {
-  position: absolute;
-  top: 0.5rem;
-  right: 1rem;
-}
-
-.read-button {
-  position: absolute;
-  bottom: 0.5rem;
-  right: 1rem;
 }
 </style>
