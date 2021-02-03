@@ -1,6 +1,9 @@
 import Vue from "vue";
 import VueRouter from "vue-router";
 
+// Store
+import store from "../store";
+
 // Components
 import Index from "../views/Index.vue";
 import DevPanel from "../views/DevPanel.vue";
@@ -40,6 +43,8 @@ const routes = [
     component: EditPostPanel,
     meta: {
       title: "Chytrá palice - Úprava článku",
+      is_logged: true,
+      is_admin: true,
     },
   },
   {
@@ -47,6 +52,8 @@ const routes = [
     component: NewPostPanel,
     meta: {
       title: "Chytrá palice - Nový článek",
+      is_logged: true,
+      is_admin: true,
     },
   },
   {
@@ -67,6 +74,36 @@ const router = new VueRouter({
 router.beforeEach((to, from, next) => {
   document.title = to.meta.title;
   next();
+});
+
+router.beforeEach((to, from, next) => {
+  if (to.matched.some((record) => record.meta.is_logged)) {
+    if (!store.getters.isLoggedIn) {
+      next({
+        path: "/",
+        query: { err: "login" },
+      });
+    } else {
+      next();
+    }
+  } else {
+    next();
+  }
+});
+
+router.beforeEach((to, from, next) => {
+  if (to.matched.some((record) => record.meta.is_admin)) {
+    if (!store.getters.isAdmin) {
+      next({
+        path: "/",
+        query: { err: "admin" },
+      });
+    } else {
+      next();
+    }
+  } else {
+    next();
+  }
 });
 
 export default router;
