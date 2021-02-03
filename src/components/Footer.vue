@@ -7,6 +7,7 @@
         <br />
         Licensed under
         <a href="https://opensource.org/licenses/MIT">MIT</a>
+        <router-link to="/dev" class="px-2">dev</router-link>
       </p>
     </div>
   </footer>

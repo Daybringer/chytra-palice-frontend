@@ -2,7 +2,9 @@ import Vue from "vue";
 import VueRouter from "vue-router";
 import Index from "../views/Index.vue";
 import DevPanel from "../views/DevPanel.vue";
-import NewPost from "../views/NewPost.vue";
+import NewPostPanel from "../views/NewPostPanel.vue";
+import PostPanel from "../views/PostPanel.vue";
+import EditPostPanel from "../views/EditPostPanel.vue";
 
 Vue.use(VueRouter);
 
@@ -17,10 +19,24 @@ const routes = [
   {
     path: "/dev",
     component: DevPanel,
+    meta: {
+      title: "Chytrá palice - Dev Dashboard",
+    },
   },
   {
-    path: "novy-clanek",
-    component: NewPost,
+    path: "/clanek/:id",
+    component: PostPanel,
+  },
+  {
+    path: "/clanek/edit/:id",
+    component: EditPostPanel,
+  },
+  {
+    path: "/novy-clanek",
+    component: NewPostPanel,
+    meta: {
+      title: "Chytrá palice - Nový článek",
+    },
   },
 ];
 

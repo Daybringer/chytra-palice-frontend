@@ -3,7 +3,8 @@
     <div class="container">
       <post-card
         v-for="post in posts"
-        :key="post.title"
+        :key="post.id"
+        :id="post.id"
         :author="post.author"
         :date="post.date"
         :title="post.title"
@@ -17,17 +18,13 @@
 import PostCard from "../components/PostCard.vue";
 export default {
   name: "Index",
-  data() {
-    return {
-      posts: [],
-    };
-  },
-  mounted() {
-    const posts = JSON.parse(window.localStorage.getItem("posts"));
-    this.posts = posts;
+  computed: {
+    posts() {
+      console.log(this.$store.getters.getPosts);
+      return this.$store.getters.getPosts;
+    },
   },
   components: { PostCard },
-  methods: {},
 };
 </script>
 

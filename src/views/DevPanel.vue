@@ -1,7 +1,13 @@
 <template>
-  <div>
-    <button @click="flushLocal">Clear Local Storage</button>
-    <button @click="addExamplePost">Add example post</button>
+  <div class="container mt-4">
+    <div class="buttons">
+      <button class="button is-danger" @click="flushLocal">
+        Clear Local Storage
+      </button>
+      <button class="button is-primary" @click="addExamplePost">
+        Add example post
+      </button>
+    </div>
   </div>
 </template>
 
@@ -10,19 +16,13 @@ export default {
   name: "DevPanel",
   methods: {
     flushLocal() {
-      window.localStorage.clear();
+      this.$store.dispatch("deleteAllPosts");
     },
     addExamplePost() {
-      let posts = JSON.parse(window.localStorage.getItem("posts"));
-      const examplePost = {
-        author: "Michaela Bečková",
-        date: "31.1.2020",
+      this.$store.dispatch("newPost", {
         title: "Palice 2020",
-        content: "<h1>What is this?</h1><strong>some text</strong>",
-      };
-      if (!posts) posts = [];
-      posts.push(examplePost);
-      window.localStorage.setItem("posts", JSON.stringify(posts));
+        content: "<h3>What is this?</h3><br/>some text",
+      });
     },
   },
 };

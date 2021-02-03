@@ -48,12 +48,12 @@
       </b-navbar-item>
       <b-navbar-item tag="div">
         <div class="buttons">
-          <a v-if="!logged" @click="logIn" class="button is-primary">
+          <button v-if="!logged" @click="logIn" class="button is-primary">
             <strong>Přihlásit se</strong>
-          </a>
-          <a v-if="logged" @click="logOut" class="button is-primary"
-            ><strong>Odhlasit se</strong></a
-          >
+          </button>
+          <button v-if="logged" @click="logOut" class="button is-primary">
+            <strong>Odhlasit se</strong>
+          </button>
         </div>
       </b-navbar-item>
     </template>

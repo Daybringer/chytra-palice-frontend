@@ -27,34 +27,50 @@
 import { VueEditor } from "vue2-editor";
 export default {
   name: "CreatePostFormular",
+  props: {
+    type: String, //create | edit
+    id: String,
+  },
   components: { VueEditor },
   data() {
     return {
       toolbarSettings: [
-        [{ header: [false, 1, 2] }],
+        [{ header: [false, 3] }],
         ["bold", "italic", "underline", "strike"], // toggled buttons
         // [{ list: "ordered" }, { list: "bullet" }],
         [{ color: [] }, { background: [] }], // dropdown with defaults from theme
         ["link", "image", "video"],
         ["clean"], // remove formatting button
       ],
-      author: "Blanka Činátlová",
       content: "",
       title: "",
     };
   },
   methods: {
     savePost() {
-      const date = new Date();
-      const post = {
-        title: this.title,
-        author: this.author,
-        date: `${date.getDate()}.${date.getMonth() + 1}.${date.getFullYear()}`,
-        content: this.content,
-      };
-      this.posts.push(post);
+      if (this.type === "edit") {
+        this.$store.dispatch("editPost", {
+          id: this.id,
+          title: this.title,
+          content: this.content,
+        });
+      } else {
+        this.$store.dispatch("newPost", {
+          title: this.title,
+          content: this.content,
+        });
+      }
+
+      this.title = "";
       this.content = "";
     },
+  },
+  mounted() {
+    if (this.type === "edit") {
+      const { title, content } = this.$store.getters.getPostByID(this.id);
+      this.title = title;
+      this.content = content;
+    }
   },
 };
 </script>
