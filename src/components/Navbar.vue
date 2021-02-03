@@ -15,7 +15,7 @@
     </template>
     <template #start>
       <b-navbar-item tag="router-link" :to="{ path: '/prace' }">
-        Prehled prací
+        Přehled prací
       </b-navbar-item>
       <b-navbar-item tag="router-link" :to="{ path: '/souteze' }">
         Soutěže
@@ -32,11 +32,28 @@
     </template>
 
     <template #end>
+      <b-navbar-item
+        v-if="logged && admin"
+        tag="router-link"
+        :to="{ path: '/novy-clanek' }"
+      >
+        Nový článek
+      </b-navbar-item>
+      <b-navbar-item
+        v-if="logged && admin"
+        tag="router-link"
+        :to="{ path: '/nova-soutez' }"
+      >
+        Nová soutež
+      </b-navbar-item>
       <b-navbar-item tag="div">
         <div class="buttons">
-          <a class="button is-primary">
+          <a v-if="!logged" @click="logIn" class="button is-primary">
             <strong>Přihlásit se</strong>
           </a>
+          <a v-if="logged" @click="logOut" class="button is-primary"
+            ><strong>Odhlasit se</strong></a
+          >
         </div>
       </b-navbar-item>
     </template>
@@ -45,6 +62,22 @@
 <script>
 export default {
   name: "Navbar",
+  methods: {
+    logIn() {
+      this.$store.dispatch("logIn");
+    },
+    logOut() {
+      this.$store.dispatch("logOut");
+    },
+  },
+  computed: {
+    logged() {
+      return this.$store.getters.isLoggedIn;
+    },
+    admin() {
+      return this.$store.getters.isAdmin;
+    },
+  },
 };
 </script>
 <style scoped>

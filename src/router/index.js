@@ -1,6 +1,8 @@
 import Vue from "vue";
 import VueRouter from "vue-router";
 import Index from "../views/Index.vue";
+import DevPanel from "../views/DevPanel.vue";
+import NewPost from "../views/NewPost.vue";
 
 Vue.use(VueRouter);
 
@@ -11,6 +13,14 @@ const routes = [
     meta: {
       title: "Chytrá palice - literární soutěž GJK",
     },
+  },
+  {
+    path: "/dev",
+    component: DevPanel,
+  },
+  {
+    path: "novy-clanek",
+    component: NewPost,
   },
 ];
 

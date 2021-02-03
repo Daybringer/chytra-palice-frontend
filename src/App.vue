@@ -1,27 +1,19 @@
 <template>
   <div id="app">
     <div class="content-wrap">
-      <navbar></navbar>
+      <Navbar></Navbar>
       <router-view />
     </div>
-    <footer class="custom-footer has-background-white-bis">
-      <div class="has-text-centered">
-        <p>
-          Created by
-          <a href="https://daybringer.github.io" target="_">Michal Vaňata</a>
-          <br />
-          Licensed under
-          <a href="https://opensource.org/licenses/MIT">MIT</a>
-        </p>
-      </div>
-    </footer>
+    <Footer></Footer>
   </div>
 </template>
 <script>
+// Components
 import Navbar from "./components/Navbar.vue";
+import Footer from "./components/Footer.vue";
 export default {
   name: "App",
-  components: { Navbar },
+  components: { Navbar, Footer },
 };
 </script>
 <style lang="scss">
@@ -51,7 +43,7 @@ body {
 @import "~bulma/sass/utilities/_all";
 $navbar-height: 3.5rem;
 // Set your colors
-$primary: #8c67ef;
+$primary: #80b918;
 $primary-light: findLightColor($primary);
 $primary-dark: findDarkColor($primary);
 $primary-invert: findColorInvert($primary);
