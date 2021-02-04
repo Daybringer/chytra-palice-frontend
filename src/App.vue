@@ -22,6 +22,24 @@ body {
   margin: 0;
   padding: 0;
 }
+
+// Footer fixed bottom solution
+#app {
+  position: relative;
+}
+.content-wrap {
+  min-height: 100vh;
+  padding-bottom: 6rem;
+}
+
+.html-content p {
+  margin-bottom: 0.5rem !important;
+}
+
+.html-content p br {
+  display: none;
+}
+
 // Import Bulma's core
 @import "~bulma/sass/utilities/_all";
 $navbar-height: 3.5rem;

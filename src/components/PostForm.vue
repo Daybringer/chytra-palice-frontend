@@ -18,8 +18,9 @@
         v-model="content"
         class="block"
       ></vue-editor>
-
-      <button class="button block">Save post</button>
+      <div class="buttons">
+        <button class="button is-primary">Uložit článek</button>
+      </div>
     </form>
   </div>
 </template>
@@ -50,22 +51,46 @@ export default {
   },
   methods: {
     savePost() {
-      if (this.type === "edit") {
-        this.$store.dispatch("editPost", {
-          id: this.id,
-          title: this.title,
-          content: this.content,
-        });
-      } else {
-        this.$store.dispatch("newPost", {
-          title: this.title,
-          content: this.content,
-        });
-      }
+      this.title = this.title.trim();
+      this.content = this.content.trim();
 
-      // TODO implement some sort of user feedback e.g. green box with a thick tick
-      this.title = "";
-      this.content = "";
+      if (this.title && this.content) {
+        if (this.type === "edit") {
+          this.$store.dispatch("editPost", {
+            id: this.id,
+            title: this.title,
+            content: this.content,
+          });
+        } else {
+          this.$store.dispatch("newPost", {
+            title: this.title,
+            content: this.content,
+          });
+        }
+
+        this.showSuccess();
+        this.title = "";
+        this.content = "";
+        this.$router.push(`/clanek/${this.id}`);
+      } else {
+        this.showError();
+      }
+    },
+    showError() {
+      this.$buefy.toast.open({
+        duration: 5000,
+        message: `Článek nesmí být prázdný`,
+        position: "is-top",
+        type: "is-danger",
+      });
+    },
+    showSuccess() {
+      this.$buefy.toast.open({
+        duration: 5000,
+        message: `Článek byl úspěšně uložen`,
+        position: "is-top",
+        type: "is-success",
+      });
     },
   },
   mounted() {

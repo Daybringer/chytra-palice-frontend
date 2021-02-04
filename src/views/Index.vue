@@ -24,6 +24,7 @@ export default {
     },
   },
   components: { PostCard },
+  mounted() {},
 };
 </script>
 

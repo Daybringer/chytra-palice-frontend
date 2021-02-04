@@ -5,7 +5,7 @@
       <h1 class="title has-text-primary">{{ title }}</h1>
       <h2 class="subtitle">{{ author }}</h2>
       <hr />
-      <div class="content" v-html="content"></div>
+      <div class="content html-content" v-html="content"></div>
     </div>
 
     <!-- Link to post panel -->

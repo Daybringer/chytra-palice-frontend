@@ -46,7 +46,7 @@
             <strong>Přihlásit se</strong>
           </button>
           <button v-if="logged" @click="logOut" class="button is-primary">
-            <strong>Odhlasit se</strong>
+            <strong>Odhlásit se</strong>
           </button>
         </div>
       </b-navbar-item>
@@ -60,10 +60,22 @@ export default {
   methods: {
     logIn() {
       this.$store.dispatch("logIn");
+      this.$buefy.toast.open({
+        duration: 5000,
+        message: `Byl(a) jste úspěšně přihlášen`,
+        position: "is-top",
+        type: "is-success",
+      });
     },
     logOut() {
       this.$store.dispatch("logOut");
       this.$router.push("/");
+      this.$buefy.toast.open({
+        duration: 5000,
+        message: `Byl(a) jste úspěšně odhlášen`,
+        position: "is-top",
+        type: "is-info",
+      });
     },
   },
   computed: {

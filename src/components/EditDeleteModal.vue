@@ -20,6 +20,12 @@ export default {
   methods: {
     removePost() {
       this.$store.dispatch("removePost", this.id);
+      this.$buefy.toast.open({
+        duration: 5000,
+        message: `Článek byl smazán`,
+        position: "is-top",
+        type: "is-info",
+      });
       this.$emit("close");
     },
     pushToEdit() {
