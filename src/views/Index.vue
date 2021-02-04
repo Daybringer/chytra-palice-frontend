@@ -24,7 +24,30 @@ export default {
     },
   },
   components: { PostCard },
-  mounted() {},
+  mounted() {
+    if (this.$route.query.err == "admin") {
+      this.$buefy.toast.open({
+        duration: 5000,
+        message: `Nedostatečná oprávnění`,
+        position: "is-top",
+        type: "is-danger",
+      });
+    } else if (this.$route.query.err == "login") {
+      this.$buefy.toast.open({
+        duration: 5000,
+        message: `Pro přístup musíte být přihlášen(a)`,
+        position: "is-top",
+        type: "is-danger",
+      });
+    } else if (this.$route.query.err == "notFound") {
+      this.$buefy.toast.open({
+        duration: 5000,
+        message: `Článek neexistuje`,
+        position: "is-top",
+        type: "is-danger",
+      });
+    }
+  },
 };
 </script>
 

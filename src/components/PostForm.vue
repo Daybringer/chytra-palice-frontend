@@ -96,6 +96,8 @@ export default {
   mounted() {
     if (this.type === "edit") {
       const { title, content } = this.$store.getters.getPostByID(this.id);
+      if (!(title && content))
+        this.$router.push({ path: "/", query: { err: "notFound" } });
       this.title = title;
       this.content = content;
     }

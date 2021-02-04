@@ -64,7 +64,7 @@ export default {
         duration: 5000,
         message: `Byl(a) jste úspěšně přihlášen`,
         position: "is-top",
-        type: "is-success",
+        type: "is-primary",
       });
     },
     logOut() {

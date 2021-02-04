@@ -50,9 +50,13 @@ export default {
   methods: {
     loadContent() {
       this.post = this.$store.getters.getPostByID(this.id);
+      if (!this.post) {
+        this.$router.push({ path: "/", query: { err: "notFound" } });
+        this.error = true;
+      }
     },
     setTitle() {
-      document.title = `Chytrá palice - ${this.post.title}`;
+      if (!this.error) document.title = `Chytrá palice - ${this.post.title}`;
     },
     linkToPost() {
       this.$router.push({ path: `/clanek/${this.id}` });
