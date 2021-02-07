@@ -11,6 +11,7 @@ import NewPostPanel from "../views/NewPostPanel.vue";
 import PostPanel from "../views/PostPanel.vue";
 import EditPostPanel from "../views/EditPostPanel.vue";
 import NotFound from "../views/NotFound.vue";
+import NewContestPanel from "../views/NewContestPanel.vue";
 
 Vue.use(VueRouter);
 
@@ -52,6 +53,15 @@ const routes = [
     component: NewPostPanel,
     meta: {
       title: "Chytrá palice - Nový článek",
+      is_logged: true,
+      is_admin: true,
+    },
+  },
+  {
+    path: "/nova-soutez",
+    component: NewContestPanel,
+    meta: {
+      title: "Chytrá palice - Vytvoření soutěže",
       is_logged: true,
       is_admin: true,
     },

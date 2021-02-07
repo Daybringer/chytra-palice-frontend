@@ -1,5 +1,8 @@
 <template>
   <div class="box p-6">
+    <h1 class="title">
+      {{ type === "create" ? "Nový článek" : "Editace článku" }}
+    </h1>
     <form @submit.prevent="savePost">
       <div class="field block">
         <label class="label">Nadpis</label>
@@ -12,7 +15,15 @@
           />
         </div>
       </div>
-
+      <b-field label="Add some tags" :label-position="'on-border'">
+        <b-taginput
+          :value="['My first tag', 'My second tag']"
+          ellipsis
+          icon="label"
+          placeholder="Add a tag"
+        >
+        </b-taginput>
+      </b-field>
       <vue-editor
         :editor-toolbar="toolbarSettings"
         v-model="content"

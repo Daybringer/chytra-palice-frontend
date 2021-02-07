@@ -37,7 +37,7 @@
         tag="router-link"
         :to="{ path: '/nova-soutez' }"
       >
-        Nová soutež
+        Nová soutěž
       </b-navbar-item>
       <!-- Login/Logout button  -->
       <b-navbar-item tag="div">
