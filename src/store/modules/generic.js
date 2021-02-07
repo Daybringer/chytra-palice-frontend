@@ -3,6 +3,7 @@ const state = () => ({
   admin: true,
   name: "Blanka Činátlova",
   posts: JSON.parse(window.localStorage.getItem("posts")) || [],
+  contests: JSON.parse(window.localStorage.getItem("contests")) || [],
 });
 
 const getters = {
@@ -25,6 +26,9 @@ const getters = {
       }
     }
     return null;
+  },
+  getContests: (state) => {
+    return state.contests;
   },
 };
 
@@ -72,12 +76,46 @@ const actions = {
       id,
       title: title.trim(),
       author: getters.getName,
-      date: `${date.getDate()}.${date.getMonth() + 1}.${date.getFullYear()}`,
+      date,
+      // `${date.getDate()}.${date.getMonth() + 1}.${date.getFullYear()}`
       content: content.trim(),
     };
 
     commit("addPost", newPost);
     dispatch("savePosts");
+  },
+  // Contests
+  saveContests({ state }) {
+    window.localStorage.setItem("contests", JSON.stringify(state.contests));
+  },
+  newContest({ dispatch, commit, getters }, contest) {
+    const { name, endDate, category, description } = contest;
+    const date = new Date();
+
+    // TODO may move this to separate function
+    let id;
+    const contests = getters.getContests;
+    if (contests.length === 0) {
+      id = 0;
+    } else {
+      id = contests[contests.length - 1].id + 1;
+    }
+
+    const newContest = {
+      id,
+      dateCreated: date,
+      dateEnding: endDate,
+      name: name.trim(),
+      category,
+      description: description.trim(),
+      //
+      isClosed: false,
+      winners: [],
+      nominated: [],
+    };
+
+    commit("addContest", newContest);
+    dispatch("saveContests");
   },
 };
 
@@ -109,6 +147,10 @@ const mutations = {
   },
   logIn(state) {
     state.loggedIn = true;
+  },
+  // Contests
+  addContest(state, contest) {
+    state.contests.push(contest);
   },
 };
 

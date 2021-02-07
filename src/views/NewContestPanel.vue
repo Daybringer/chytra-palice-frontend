@@ -5,25 +5,52 @@
         <h1 class="title">Vypsání nové soutěže</h1>
         <b-field
           label="Název soutěže"
-          :message="'Ahoj'"
-          :type="'is-danger'"
+          :message="errors.name"
+          :type="errors.name ? 'is-danger' : checked.name ? 'is-success' : ''"
           :label-position="'on-border'"
         >
-          <b-input placeholder="Název soutěže" v-model="contestName"></b-input>
+          <b-input
+            placeholder="Název soutěže"
+            v-model.trim="contest.name"
+            @input="validate('name')"
+            @blur="validate('name')"
+          ></b-input>
         </b-field>
-        <b-field label="Datum uzávěrky" :label-position="'on-border'">
+        <b-field
+          label="Datum uzávěrky"
+          :label-position="'on-border'"
+          :message="errors.endDate"
+          :type="
+            errors.endDate ? 'is-danger' : checked.endDate ? 'is-success' : ''
+          "
+        >
           <b-datepicker
             placeholder="Vyberte datum"
-            v-model="contestDateEnding"
+            v-model="contest.endDate"
             :locale="'cs-CZ'"
             :min-date="dateToday"
             icon="calendar-today"
             trap-focus
+            @input="validate('endDate')"
+            @blur="validate('endDate')"
           >
+            <!-- TODO add custom validation text - Buefy doesn't allow messages on readonly elements -->
           </b-datepicker>
         </b-field>
-        <b-field label="Kategorie" :label-position="'on-border'">
-          <b-select placeholder="Vyberte kategorii">
+        <b-field
+          label="Kategorie"
+          :label-position="'on-border'"
+          :message="errors.category"
+          :type="
+            errors.category ? 'is-danger' : checked.category ? 'is-success' : ''
+          "
+        >
+          <b-select
+            v-model="contest.category"
+            placeholder="Vyberte kategorii"
+            @input="validate('category')"
+            @blur="validate('category')"
+          >
             <option value="palice">
               Chytrá palice
             </option>
@@ -35,12 +62,25 @@
             </option>
           </b-select>
         </b-field>
-        <b-field label="Popis soutěže" :label-position="'on-border'">
+        <b-field
+          label="Popis soutěže"
+          :label-position="'on-border'"
+          :message="errors.description"
+          :type="
+            errors.description
+              ? 'is-danger'
+              : checked.description
+              ? 'is-success'
+              : ''
+          "
+        >
           <b-input
             placeholder="Popis soutěže..."
             maxlength="150"
-            v-model="contestDescription"
+            v-model.trim="contest.description"
             type="textarea"
+            @input="validate('description')"
+            @blur="validate('description')"
           ></b-input>
         </b-field>
         <button @click="saveContest" class="button is-primary">
@@ -52,18 +92,79 @@
 </template>
 
 <script>
+// yup validation
+import { object, string, date } from "yup";
+const newContestSchema = object().shape({
+  name: string()
+    .required("Vyplňte název soutěže")
+    .min(3, "Název soutěže je moc krátký (3-30 znaků)")
+    .max(30, "Název soutěže je moc dlouhý (3-30 znaků)"),
+  endDate: date()
+    .required("Vyplňte datum uzávěrky")
+    .typeError("Vyplňte datum uzávěrky"),
+  category: string().matches(/palice|palicka|other/, {
+    message: "Zvolte kategorii",
+    excludeEmptyString: false,
+  }),
+  description: string().max(150),
+});
+
 export default {
   name: "NewContestPanel",
   data() {
     return {
-      contestName: "",
-      contestDateEnding: "",
-      contestDescription: "",
+      contest: {
+        name: "",
+        endDate: null,
+        category: "",
+        description: "",
+      },
+      checked: {
+        name: false,
+        endDate: false,
+        category: false,
+        description: false,
+      },
+      errors: {
+        name: "",
+        endDate: "",
+        category: "",
+        description: "",
+      },
     };
   },
   methods: {
-    saveContest() {
-      console.log("save");
+    async saveContest() {
+      await this.validateAll();
+      if (
+        !(
+          this.errors.name ||
+          this.errors.endDate ||
+          this.errors.category ||
+          this.errors.description
+        )
+      ) {
+        console.log("contest is valid and will be saved");
+      }
+    },
+    async validateAll() {
+      await Promise.all([
+        this.validate("name"),
+        this.validate("endDate"),
+        this.validate("category"),
+        this.validate("description"),
+      ]);
+    },
+    async validate(field) {
+      newContestSchema
+        .validateAt(field, this.contest)
+        .then(() => {
+          this.errors[field] = "";
+          this.checked[field] = true;
+        })
+        .catch((err) => {
+          this.errors[field] = err.message;
+        });
     },
   },
   computed: {
