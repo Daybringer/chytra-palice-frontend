@@ -12,6 +12,7 @@ import PostPanel from "../views/PostPanel.vue";
 import EditPostPanel from "../views/EditPostPanel.vue";
 import NotFound from "../views/NotFound.vue";
 import NewContestPanel from "../views/NewContestPanel.vue";
+import ContestsPanel from "../views/ContestsPanel.vue";
 
 Vue.use(VueRouter);
 
@@ -34,7 +35,7 @@ const routes = [
   {
     path: "/clanek/:id",
     component: PostPanel,
-    // Title is overwritten with post name
+    // Title is overwritten in component
     meta: {
       title: "Chytrá palice - Článek",
     },
@@ -64,6 +65,21 @@ const routes = [
       title: "Chytrá palice - Vytvoření soutěže",
       is_logged: true,
       is_admin: true,
+    },
+  },
+  {
+    path: "/souteze",
+    component: ContestsPanel,
+    meta: {
+      title: "Chytrá palice - Přehled soutěží",
+    },
+  },
+  {
+    path: "/souteze/:id",
+    component: ContestsPanel,
+    // Title is overwritten in component
+    meta: {
+      title: "Chytrá palice - Soutěž",
     },
   },
   {

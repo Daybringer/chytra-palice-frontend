@@ -1,5 +1,5 @@
 <template>
-  <div class="box p-6">
+  <div class="box p-6-desktop">
     <h1 class="title">
       {{ type === "create" ? "Nový článek" : "Editace článku" }}
     </h1>

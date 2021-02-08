@@ -89,6 +89,7 @@ const actions = {
     window.localStorage.setItem("contests", JSON.stringify(state.contests));
   },
   newContest({ dispatch, commit, getters }, contest) {
+    console.log(contest);
     const { name, endDate, category, description } = contest;
     const date = new Date();
 

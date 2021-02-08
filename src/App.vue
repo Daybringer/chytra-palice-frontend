@@ -40,6 +40,16 @@ body {
   display: none;
 }
 
+.p-6-desktop {
+  padding: 2rem !important;
+}
+
+@media only screen and (min-width: 1024px) {
+  .p-6-desktop {
+    padding: 3rem !important;
+  }
+}
+
 // Import Bulma's core
 @import "~bulma/sass/utilities/_all";
 $navbar-height: 3.5rem;
