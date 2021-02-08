@@ -13,6 +13,7 @@ import EditPostPanel from "../views/EditPostPanel.vue";
 import NotFound from "../views/NotFound.vue";
 import NewContestPanel from "../views/NewContestPanel.vue";
 import ContestsPanel from "../views/ContestsPanel.vue";
+import ContestPanel from "../views/ContestPanel.vue";
 
 Vue.use(VueRouter);
 
@@ -76,7 +77,7 @@ const routes = [
   },
   {
     path: "/souteze/:id",
-    component: ContestsPanel,
+    component: ContestPanel,
     // Title is overwritten in component
     meta: {
       title: "Chytrá palice - Soutěž",

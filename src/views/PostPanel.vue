@@ -1,6 +1,6 @@
 <template>
   <div class="container">
-    <div class="box card min-h-80">
+    <div class="box card">
       <h1 class="title has-text-primary">{{ post.title }}</h1>
       <h2 class="subtitle">{{ post.author }}</h2>
       <hr />

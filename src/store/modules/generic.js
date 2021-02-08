@@ -27,8 +27,17 @@ const getters = {
     }
     return null;
   },
+  // Contests
   getContests: (state) => {
     return state.contests;
+  },
+  getContestByID: (state) => (id) => {
+    for (let i = 0; i < state.contests.length; i++) {
+      if (state.contests[i].id == id) {
+        return state.contests[i];
+      }
+    }
+    return null;
   },
 };
 

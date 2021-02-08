@@ -46,6 +46,13 @@ export default {
         position: "is-top",
         type: "is-danger",
       });
+    } else if (this.$route.query.err == "conNotFound") {
+      this.$buefy.toast.open({
+        duration: 5000,
+        message: `Soutěž neexistuje`,
+        position: "is-top",
+        type: "is-danger",
+      });
     }
   },
 };

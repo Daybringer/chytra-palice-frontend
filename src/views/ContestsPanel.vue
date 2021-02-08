@@ -117,7 +117,6 @@ export default {
   },
   computed: {
     allContests() {
-      console.log(this.$store.getters.getContests);
       return this.$store.getters.getContests;
     },
     activeContests() {
