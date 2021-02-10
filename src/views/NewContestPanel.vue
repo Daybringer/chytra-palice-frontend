@@ -82,7 +82,10 @@
           @blur="validate('description')"
         ></b-input>
       </b-field>
-      <button @click="saveContest" class="button is-primary">
+      <button
+        @click="saveContest"
+        class="button is-primary has-text-weight-medium"
+      >
         Vypsat soutěž
       </button>
     </div>

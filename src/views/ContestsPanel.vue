@@ -6,7 +6,7 @@
         <div
           v-for="contest in activeContests"
           :key="contest.id"
-          class="card mt-4 is-clickable columns mx-0"
+          class="card mt-4 is-clickable activeContestCard columns mx-0"
           @click="routeToContest(contest.id)"
         >
           <p
@@ -17,7 +17,12 @@
           <p
             class="column is-flex is-justify-content-center is-align-items-center"
           >
-            {{ "do " + dateToHumanFormat(contest.dateEnding) }}
+            {{ "do " + formatDate(contest.dateEnding) }}
+          </p>
+          <p
+            class="column is-flex is-justify-content-center is-align-items-center"
+          >
+            {{ numberOfNominatedToString(contest.nominated) }}
           </p>
           <div
             class="column has-text-centered is-justify-content-center is-align-items-center is-flex"
@@ -72,7 +77,7 @@
             centered
             sortable
           >
-            {{ dateToHumanFormat(props.row.dateEnding) }}
+            {{ formatDate(props.row.dateEnding) }}
           </b-table-column>
 
           <b-table-column
@@ -140,10 +145,13 @@ export default {
     routeToContest(id) {
       this.$router.push(`/souteze/${id}`);
     },
-    dateToHumanFormat(dateString) {
-      const date = new Date(dateString);
-      if (date)
-        return `${date.getDate()}.${date.getMonth() + 1}.${date.getFullYear()}`;
+    formatDate(dateString) {
+      return this.$formateDate(dateString);
+    },
+    numberOfNominatedToString(nominated) {
+      return `${nominated.length} ${
+        nominated.length === 0 || nominated.length > 4 ? "prací" : "práce"
+      }`;
     },
     isContestActive(dateString) {
       const date = new Date(dateString);
@@ -163,5 +171,11 @@ export default {
   width: auto;
   padding: 0;
   margin: 0;
+}
+.activeContestCard:hover {
+  transform: scale(105%);
+}
+.activeContestCard:focus-within {
+  transform: scale(105%);
 }
 </style>

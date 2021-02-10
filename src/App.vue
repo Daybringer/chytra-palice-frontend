@@ -44,6 +44,10 @@ body {
   padding: 2rem !important;
 }
 
+.min-h-80vh {
+  min-height: 80vh;
+}
+
 @media only screen and (min-width: 1024px) {
   .p-6-desktop {
     padding: 3rem !important;
@@ -132,4 +136,5 @@ $link-focus-border: $primary;
 // Import Bulma and Buefy styles
 @import "~bulma";
 @import "~buefy/src/scss/buefy";
+@import "~@creativebulma/bulma-divider";
 </style>

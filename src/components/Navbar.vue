@@ -62,7 +62,7 @@ export default {
       this.$store.dispatch("logIn");
       this.$buefy.toast.open({
         duration: 5000,
-        message: `Byl(a) jste úspěšně přihlášen`,
+        message: `Byl(a) jste úspěšně přihlášen(a)`,
         position: "is-top",
         type: "is-primary",
       });
@@ -72,7 +72,7 @@ export default {
       this.$router.push("/");
       this.$buefy.toast.open({
         duration: 5000,
-        message: `Byl(a) jste úspěšně odhlášen`,
+        message: `Byl(a) jste úspěšně odhlášen(a)`,
         position: "is-top",
         type: "is-info",
       });

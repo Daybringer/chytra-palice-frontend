@@ -7,6 +7,10 @@ import Buefy from "buefy";
 Vue.use(Buefy);
 Vue.config.productionTip = false;
 
+import generalPlugin from "./plugins/general";
+
+Vue.use(generalPlugin);
+
 new Vue({
   router,
   store,

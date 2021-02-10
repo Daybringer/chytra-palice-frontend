@@ -30,7 +30,9 @@
         class="block"
       ></vue-editor>
       <div class="buttons">
-        <button class="button is-primary">Uložit článek</button>
+        <button class="button is-primary has-text-weight-medium">
+          Uložit článek
+        </button>
       </div>
     </form>
   </div>
@@ -61,6 +63,7 @@ export default {
     };
   },
   methods: {
+    // FIXME rewrite to async - rewrite VUEX to Promises
     savePost() {
       this.title = this.title.trim();
       this.content = this.content.trim();
@@ -72,17 +75,16 @@ export default {
             title: this.title,
             content: this.content,
           });
+          this.$router.push(`/clanek/${this.id}`);
         } else {
           this.$store.dispatch("newPost", {
             title: this.title,
             content: this.content,
           });
+          this.$router.push(`/`);
         }
 
         this.showSuccess();
-        this.title = "";
-        this.content = "";
-        this.$router.push(`/clanek/${this.id}`);
       } else {
         this.showError();
       }

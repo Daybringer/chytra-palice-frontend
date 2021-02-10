@@ -1,7 +1,8 @@
 const state = () => ({
   loggedIn: true,
   admin: true,
-  name: "Blanka Činátlova",
+  name: "Blanka Činátlová",
+  email: "cinatlova@gjk.cz",
   posts: JSON.parse(window.localStorage.getItem("posts")) || [],
   contests: JSON.parse(window.localStorage.getItem("contests")) || [],
 });
@@ -12,6 +13,9 @@ const getters = {
   },
   isAdmin: (state) => {
     return state.admin;
+  },
+  getEmail: (state) => {
+    return state.email;
   },
   getName: (state) => {
     return state.name;
@@ -97,6 +101,7 @@ const actions = {
   saveContests({ state }) {
     window.localStorage.setItem("contests", JSON.stringify(state.contests));
   },
+
   newContest({ dispatch, commit, getters }, contest) {
     console.log(contest);
     const { name, endDate, category, description } = contest;
