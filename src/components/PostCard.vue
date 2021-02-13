@@ -3,7 +3,8 @@
     <!-- Post  -->
     <div>
       <h1 class="title has-text-primary">{{ title }}</h1>
-      <h2 class="subtitle">{{ author }}</h2>
+      <h2 class="subtitle mb-1">{{ author }}</h2>
+      <h3 class="has-text-grey">{{ date }}</h3>
       <hr />
       <div class="content html-content" v-html="content"></div>
     </div>

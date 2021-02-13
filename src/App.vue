@@ -1,8 +1,8 @@
 <template>
   <div id="app">
-    <div class="content-wrap">
+    <div class="content-wrap has-navbar-fixed-top">
       <Navbar></Navbar>
-      <router-view />
+      <router-view class="mt-6" />
     </div>
     <Footer></Footer>
   </div>
@@ -28,7 +28,7 @@ body {
   position: relative;
 }
 .content-wrap {
-  min-height: 100vh;
+  min-height: calc(100vh - 6rem);
   padding-bottom: 6rem;
 }
 

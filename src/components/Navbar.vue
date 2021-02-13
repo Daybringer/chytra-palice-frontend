@@ -1,5 +1,5 @@
 <template>
-  <b-navbar>
+  <b-navbar class="is-fixed-top">
     <template #brand>
       <b-navbar-item
         class="logoSVGcontainer"

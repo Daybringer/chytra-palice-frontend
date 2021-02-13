@@ -1,5 +1,5 @@
 <template>
-  <div class="container mt-4">
+  <div class="container my-6">
     <div class="box">
       <div class="block has-text-centered">
         <h2 class="title py-3">Probíhající soutěže</h2>

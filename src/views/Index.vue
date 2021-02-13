@@ -1,5 +1,5 @@
 <template>
-  <section class="section container">
+  <section class="section container pt-0">
     <section class="section">
       <div class="tile is-ancestor">
         <div class="tile is-vertical is-8">
@@ -53,7 +53,7 @@
         :key="post.id"
         :id="post.id"
         :author="post.author"
-        :date="post.date"
+        :date="formatDate(post.date)"
         :title="post.title"
         :content="post.content"
       ></post-card>
@@ -71,6 +71,11 @@ export default {
     },
   },
   components: { PostCard },
+  methods: {
+    formatDate(dateString) {
+      return this.$formateDate(dateString);
+    },
+  },
   mounted() {
     if (this.$route.query.err == "admin") {
       this.$buefy.toast.open({

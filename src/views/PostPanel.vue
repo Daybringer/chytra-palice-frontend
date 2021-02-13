@@ -2,7 +2,8 @@
   <div class="container">
     <div class="box card">
       <h1 class="title has-text-primary">{{ post.title }}</h1>
-      <h2 class="subtitle">{{ post.author }}</h2>
+      <h2 class="subtitle mb-1">{{ post.author }}</h2>
+      <h3 class="has-text-grey">{{ formatDate(post.date) }}</h3>
       <hr />
       <div class="content html-content" v-html="post.content"></div>
 
@@ -60,6 +61,9 @@ export default {
     },
     linkToPost() {
       this.$router.push({ path: `/clanek/${this.id}` });
+    },
+    formatDate(dateString) {
+      return this.$formateDate(dateString);
     },
   },
   computed: {

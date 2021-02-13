@@ -1,5 +1,5 @@
 <template>
-  <div class="container mt-4">
+  <div class="container my-6">
     <post-form :id="id" :type="'edit'"></post-form>
   </div>
 </template>

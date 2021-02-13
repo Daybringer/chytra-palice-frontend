@@ -15,15 +15,6 @@
           />
         </div>
       </div>
-      <b-field label="Add some tags" :label-position="'on-border'">
-        <b-taginput
-          :value="['My first tag', 'My second tag']"
-          ellipsis
-          icon="label"
-          placeholder="Add a tag"
-        >
-        </b-taginput>
-      </b-field>
       <vue-editor
         :editor-toolbar="toolbarSettings"
         v-model="content"

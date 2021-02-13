@@ -1,5 +1,5 @@
 <template>
-  <div class="container mt-4">
+  <div class="container my-6">
     <div class="buttons is-justify-content-center">
       <button class="button is-danger" @click="deletePosts">
         Delete all posts

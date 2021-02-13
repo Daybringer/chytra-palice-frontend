@@ -1,5 +1,5 @@
 <template>
-  <div class="container mt-4">
+  <div class="container my-6">
     <div class="box p-6-desktop">
       <h1 class="title">Nahrání soutěžní práce</h1>
       <div class="block">

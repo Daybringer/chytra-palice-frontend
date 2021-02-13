@@ -1,5 +1,5 @@
 <template>
-  <div class="container mt-4">
+  <div class="container my-6">
     <post-form :type="'create'"> </post-form>
   </div>
 </template>
