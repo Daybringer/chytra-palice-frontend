@@ -5,6 +5,7 @@ const state = () => ({
   email: "cinatlova@gjk.cz",
   posts: JSON.parse(window.localStorage.getItem("posts")) || [],
   contests: JSON.parse(window.localStorage.getItem("contests")) || [],
+  works: JSON.parse(window.localStorage.getItem("works")) || [],
 });
 
 const getters = {
@@ -39,6 +40,18 @@ const getters = {
     for (let i = 0; i < state.contests.length; i++) {
       if (state.contests[i].id == id) {
         return state.contests[i];
+      }
+    }
+    return null;
+  },
+  // Works
+  getWorks: (state) => {
+    return state.works;
+  },
+  getWorkByID: (state) => (id) => {
+    for (let i = 0; i < state.works.length; i++) {
+      if (state.works[i].id == id) {
+        return state.works[i];
       }
     }
     return null;
@@ -103,7 +116,6 @@ const actions = {
   },
 
   newContest({ dispatch, commit, getters }, contest) {
-    console.log(contest);
     const { name, endDate, category, description } = contest;
     const date = new Date();
 
@@ -131,6 +143,39 @@ const actions = {
 
     commit("addContest", newContest);
     dispatch("saveContests");
+  },
+
+  // Works
+  saveWorks({ state }) {
+    window.localStorage.setItem("works", JSON.stringify(state.works));
+  },
+  newWork({ dispatch, commit, getters }, work) {
+    const { name, author, contestID, file } = work;
+    const date = new Date();
+
+    // TODO may move this to separate function
+    let id;
+    const works = getters.getWorks;
+    if (works.length === 0) {
+      id = 0;
+    } else {
+      id = works[works.length - 1].id + 1;
+    }
+
+    const newWork = {
+      id,
+      date,
+      name: name.trim(),
+      author,
+      contestID,
+      // file
+      fileName: file.name,
+      approved: false,
+      guarantor: "",
+    };
+
+    commit("addWork", newWork);
+    dispatch("saveWorks");
   },
 };
 
@@ -166,6 +211,10 @@ const mutations = {
   // Contests
   addContest(state, contest) {
     state.contests.push(contest);
+  },
+  // Works
+  addWork(state, work) {
+    state.works.push(work);
   },
 };
 

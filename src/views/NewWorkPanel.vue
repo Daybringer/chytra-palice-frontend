@@ -2,12 +2,23 @@
   <div class="container my-6">
     <div class="box p-6-desktop">
       <h1 class="title">Nahrání soutěžní práce</h1>
+      <!--  -->
       <div class="block">
-        <!-- Název -->
-        <b-field label="Název práce" :label-position="'on-border'">
-          <b-input placeholder="Název práce" v-model.trim="work.name"></b-input>
+        <!-- Name of work -->
+        <b-field
+          label="Název práce"
+          :message="errors.name"
+          :type="validationState('name')"
+          :label-position="'on-border'"
+        >
+          <b-input
+            placeholder="Název práce"
+            @input="validate('name')"
+            @blur="validate('name')"
+            v-model.trim="data.name"
+          ></b-input>
         </b-field>
-        <!-- Autor -->
+        <!-- Author -->
         <b-field label="Autor práce" :label-position="'on-border'">
           <b-input
             placeholder="Název práce"
@@ -15,10 +26,11 @@
             disabled
           ></b-input>
         </b-field>
-        <!-- Soutěž -->
+        <!-- Contest -->
         <b-field label="Zařazeno do soutěže" :label-position="'on-border'">
           <b-input placeholder="Soutěž" :value="contestName" disabled></b-input>
         </b-field>
+        <!-- Date  -->
         <b-field label="Datum přidání" :label-position="'on-border'">
           <b-input
             placeholder="Datum přidání"
@@ -26,20 +38,11 @@
             disabled
           ></b-input>
         </b-field>
-        <!-- Datum  -->
-
-        <!--  -->
       </div>
-      <!-- Nahrání souboru -->
+      <!-- File upload -->
       <h2 class="is-size-5 has-text-weight-semibold block">Soutěžní práce</h2>
       <b-field>
-        <b-upload
-          v-model="work.file"
-          @input="checkWork"
-          native
-          drag-drop
-          expanded
-        >
+        <b-upload v-model="data.file" native drag-drop expanded>
           <section class="section">
             <div class="content has-text-centered">
               <p>
@@ -54,8 +57,9 @@
       <div>
         <div class="divider">Nebo</div>
       </div>
-      <!-- Vue text editor -->
+      <!-- Text editor -->
       <vue-editor
+        disabled
         :editor-toolbar="toolbarSettings"
         :placeholder="'Přepište práci'"
         v-model="content"
@@ -72,6 +76,12 @@
 </template>
 
 <script>
+// yup validation
+import { object, string } from "yup";
+const newContestSchema = object().shape({
+  name: string().required("Vyplňte název práce"),
+});
+
 // Components
 import { VueEditor } from "vue2-editor";
 export default {
@@ -79,14 +89,52 @@ export default {
   components: { VueEditor },
   methods: {
     saveWork() {
-      console.log("asdf");
+      this.validate("name");
+      this.validateFile();
+      if (!(this.errors.name || this.errors.file)) {
+        this.$store.dispatch("newWork", {
+          name: this.data.name,
+          file: this.data.file,
+          author: this.author,
+          contestID: this.contestID,
+        });
+      }
     },
-    formatDate() {
-      const dateNow = new Date();
-      return this.$formateDate(dateNow);
+    formatDate(date = new Date()) {
+      return this.$formateDate(date);
     },
-    checkWork() {
-      console.log(this.work.file);
+    // FIXME only works on a properties that aren't an object => `propName` can't have a format like work.name, description.state.date, etc.
+    validationState(propName) {
+      return this.errors[propName]
+        ? "is-danger"
+        : this.checked[propName]
+        ? "is-success"
+        : "";
+    },
+    async validate(field) {
+      newContestSchema
+        .validateAt(field, this.data)
+        .then(() => {
+          this.errors[field] = "";
+          this.checked[field] = true;
+        })
+        .catch((err) => {
+          this.errors[field] = err.message;
+        });
+    },
+    validateFile() {
+      this.checked.file = true;
+      if (!this.data.file) {
+        this.errors.file = "Invalid or missing file";
+        this.$buefy.toast.open({
+          duration: 5000,
+          message: `Nahrajte prosím soutěžní práci`,
+          position: "is-bottom",
+          type: "is-danger",
+        });
+      } else {
+        this.errors.file = "";
+      }
     },
   },
   computed: {
@@ -106,7 +154,8 @@ export default {
   data() {
     return {
       errors: { name: "", file: "" },
-      work: { name: "", file: null },
+      checked: { name: "", file: "" },
+      data: { name: "", file: null },
       content: "",
       // VueEditor
       toolbarSettings: [

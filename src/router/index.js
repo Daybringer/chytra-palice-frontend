@@ -15,6 +15,8 @@ import NewContestPanel from "../views/NewContestPanel.vue";
 import ContestsPanel from "../views/ContestsPanel.vue";
 import ContestPanel from "../views/ContestPanel.vue";
 import NewWorkPanel from "../views/NewWorkPanel.vue";
+import AllWorksPanel from "../views/AllWorksPanel.vue";
+import WorkPanel from "../views/WorkPanel.vue";
 
 Vue.use(VueRouter);
 
@@ -63,6 +65,22 @@ const routes = [
   {
     path: "/nova-prace/:contestID",
     component: NewWorkPanel,
+    meta: {
+      title: "Chytrá palice - Nahrání práce",
+      is_logged: true,
+    },
+  },
+  {
+    path: "/prace",
+    component: AllWorksPanel,
+    meta: {
+      title: "Chytrá palice - Nahrání práce",
+      is_logged: true,
+    },
+  },
+  {
+    path: "/prace/:id",
+    component: WorkPanel,
     meta: {
       title: "Chytrá palice - Nahrání práce",
       is_logged: true,

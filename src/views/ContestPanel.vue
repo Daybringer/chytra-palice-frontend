@@ -88,7 +88,7 @@ export default {
       return this.$store.getters.isAdmin;
     },
   },
-  mounted() {
+  beforeMount() {
     this.loadContent();
     this.setTitle();
   },

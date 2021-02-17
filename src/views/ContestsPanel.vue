@@ -29,10 +29,18 @@
             v-if="logged"
           >
             <div class="buttons are-small">
-              <b-button icon-left="plus" type="is-primary">
+              <b-button
+                @click.stop="routeToNewWork(contest.id)"
+                icon-left="plus"
+                type="is-primary"
+              >
                 Přidat práci
               </b-button>
-              <b-button v-show="admin" icon-left="cog" type="is-info"
+              <b-button
+                v-show="admin"
+                @click.stop="routeToContest(contest.id)"
+                icon-left="cog"
+                type="is-info"
                 >Spravovat soutěž</b-button
               >
             </div>
@@ -145,6 +153,11 @@ export default {
     routeToContest(id) {
       this.$router.push(`/souteze/${id}`);
     },
+    routeToNewWork(id) {
+      console.log("Redirect from contests overview to new work panel");
+      this.$router.push(`/nova-prace/${id}`);
+    },
+
     formatDate(dateString) {
       return this.$formateDate(dateString);
     },

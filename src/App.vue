@@ -57,6 +57,7 @@ body {
 // Import Bulma's core
 @import "~bulma/sass/utilities/_all";
 $navbar-height: 3.5rem;
+
 // Set your colors
 $primary: #80b918;
 $primary-light: findLightColor($primary);
