@@ -3,6 +3,9 @@ import store from "./store";
 import App from "./App.vue";
 import router from "./router";
 import Buefy from "buefy";
+import vueDebounce from "vue-debounce";
+
+Vue.use(vueDebounce);
 
 Vue.use(Buefy);
 Vue.config.productionTip = false;

@@ -1,6 +1,6 @@
 <template>
   <section class="section container pt-0">
-    <section class="section">
+    <section class="section pt-0">
       <div class="tile is-ancestor">
         <div class="tile is-vertical is-8">
           <div class="tile">

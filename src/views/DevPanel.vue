@@ -8,6 +8,17 @@
         Add an example post
       </button>
     </div>
+    <div class="buttons is-justify-content-center">
+      <button class="button is-info" @click="changeUserAdmin">
+        Change to admin (Pešoutová)
+      </button>
+      <button class="button is-info" @click="changeUserMichal">
+        Change to student (Michal Vaňata)
+      </button>
+      <button class="button is-info" @click="changeUserJaroslava">
+        Change to student (Jaroslava Volhejnová)
+      </button>
+    </div>
   </div>
 </template>
 
@@ -15,6 +26,27 @@
 export default {
   name: "DevPanel",
   methods: {
+    changeUserAdmin() {
+      this.$store.dispatch("changeUser", {
+        admin: true,
+        name: "Blanka Činátlová",
+        email: "cinatlova@gjk.cz",
+      });
+    },
+    changeUserMichal() {
+      this.$store.dispatch("changeUser", {
+        admin: false,
+        name: "Michal Vaňata",
+        email: "xvanmi01@gjk.cz",
+      });
+    },
+    changeUserJaroslava() {
+      this.$store.dispatch("changeUser", {
+        admin: false,
+        name: "Jaroslava Volhejnová",
+        email: "xvolja01@gjk.cz",
+      });
+    },
     deletePosts() {
       this.$store.dispatch("deleteAllPosts");
     },

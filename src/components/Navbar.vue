@@ -26,6 +26,13 @@
     <!-- Right side of navbar -->
     <template #end>
       <b-navbar-item
+        v-if="logged && !admin"
+        tag="router-link"
+        :to="{ path: '/moje-prace' }"
+      >
+        Moje práce
+      </b-navbar-item>
+      <b-navbar-item
         v-if="logged && admin"
         tag="router-link"
         :to="{ path: '/novy-clanek' }"

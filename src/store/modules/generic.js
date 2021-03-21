@@ -25,11 +25,11 @@ const getters = {
     return state.posts;
   },
   getPostByID: (state) => (id) => {
-    for (let i = 0; i < state.posts.length; i++) {
-      if (state.posts[i].id == id) {
-        return state.posts[i];
+    state.posts.forEach((post) => {
+      if (post.id == id) {
+        return post;
       }
-    }
+    });
     return null;
   },
   // Contests
@@ -59,6 +59,11 @@ const getters = {
 };
 
 const actions = {
+  // Dev methods
+  changeUser({ commit }, payload) {
+    commit("setUser", payload);
+    commit("logIn");
+  },
   savePosts({ state }) {
     window.localStorage.setItem("posts", JSON.stringify(state.posts));
   },
@@ -180,6 +185,12 @@ const actions = {
 };
 
 const mutations = {
+  // Dev mutation
+  setUser(state, { name, email, admin }) {
+    state.name = name;
+    state.email = email;
+    state.admin = admin;
+  },
   addPost(state, post) {
     state.posts.push(post);
   },

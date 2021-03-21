@@ -8,12 +8,13 @@
       <div class="block">
         <b-field label="Název práce" label-position="on-border">
           <b-input
+            name="name"
             placeholder="Hledat..."
             type="search"
             icon-pack="fas"
             icon="search"
-            debounce="500"
             v-model="search.name"
+            v-debounce="filter"
           >
           </b-input>
         </b-field>
@@ -26,23 +27,25 @@
                 label-position="on-border"
               >
                 <b-input
+                  name="author"
                   placeholder="Hledat..."
                   type="search"
                   icon-pack="fas"
                   icon="search"
                   v-model="search.author"
-                  @input="debounceFilter"
+                  v-debounce="filter"
                 >
                 </b-input>
               </b-field>
               <b-field label="Název soutěže" label-position="on-border">
                 <b-input
+                  name="contest"
                   placeholder="Hledat..."
                   type="search"
                   icon-pack="fas"
                   icon="search"
                   v-model="search.contest"
-                  @input="debounceFilter"
+                  v-debounce="filter"
                 >
                 </b-input>
               </b-field>
@@ -168,16 +171,42 @@
 </template>
 
 <script>
-import { debounce } from "debounce";
 export default {
   name: "AllWorksPanel",
   methods: {
     tableClick(row) {
       this.$router.push(`/prace/${row.id}`);
     },
-    debounceFilter: debounce(() => {
-      // filtering
-    }, 1000),
+    filter() {
+      console.log("filtering");
+      const filteredWorks = [];
+      this.works.forEach((work) => {
+        if (this.search.name) {
+          if (!this.strContains(work.name, this.search.name)) return;
+        }
+        if (this.advancedSearch) {
+          if (this.search.author) {
+            if (!this.strContains(work.author, this.search.author)) return;
+          }
+          if (this.search.contest) {
+            if (!this.strContains(work.contest, this.search.contest)) return;
+          }
+        }
+        filteredWorks.push(work);
+      });
+      this.filteredWorks = filteredWorks;
+    },
+    strContains(string, substring) {
+      const normalizedString = string
+        .toLowerCase()
+        .normalize("NFD")
+        .replace(/[\u0300-\u036f]/g, "");
+      const normalizedSubstring = substring
+        .toLowerCase()
+        .normalize("NFD")
+        .replace(/[\u0300-\u036f]/g, "");
+      return normalizedString.includes(normalizedSubstring);
+    },
   },
   computed: {
     works() {
@@ -194,6 +223,9 @@ export default {
       });
       return works;
     },
+  },
+  beforeMount() {
+    this.filteredWorks = this.works;
   },
   data() {
     return {

@@ -74,8 +74,7 @@ const routes = [
     path: "/prace",
     component: AllWorksPanel,
     meta: {
-      title: "Chytrá palice - Nahrání práce",
-      is_logged: true,
+      title: "Chytrá palice - Přehled prací",
     },
   },
   {
