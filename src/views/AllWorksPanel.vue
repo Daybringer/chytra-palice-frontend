@@ -98,14 +98,14 @@
           class="is-clickable"
         >
           <b-table-column
-            field="id"
+            field="ID"
             label="ID"
             width="40"
             numeric
             v-slot="props"
             sortable
           >
-            {{ props.row.id }}
+            {{ props.row.ID }}
           </b-table-column>
           <b-table-column
             field="name"
@@ -123,7 +123,7 @@
             sortable
             centered
           >
-            {{ props.row.author }}
+            {{ props.row.authorName }}
           </b-table-column>
           <b-table-column
             field="contest"
@@ -162,7 +162,7 @@
             sortable
             centered
           >
-            {{ new Date(props.row.date).toLocaleDateString() }}
+            {{ new Date(props.row.dateAdded).toLocaleDateString() }}
           </b-table-column>
         </b-table>
       </div>

@@ -2,10 +2,10 @@
   <footer class="custom-footer has-background-white-bis">
     <div class="has-text-centered">
       <p>
-        Created by
+        Vytvořil
         <a href="https://daybringer.github.io" target="_">Michal Vaňata</a>
         <br />
-        Licensed under
+        Licencováno pod
         <a href="https://opensource.org/licenses/MIT">MIT</a>
         <!-- TODO remove link to dev -->
         <router-link to="/dev" class="px-2">dev</router-link>

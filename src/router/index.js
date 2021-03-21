@@ -17,6 +17,7 @@ import ContestPanel from "../views/ContestPanel.vue";
 import NewWorkPanel from "../views/NewWorkPanel.vue";
 import AllWorksPanel from "../views/AllWorksPanel.vue";
 import WorkPanel from "../views/WorkPanel.vue";
+import MyWorksPanel from "../views/MyWorksPanel.vue";
 
 Vue.use(VueRouter);
 
@@ -86,6 +87,15 @@ const routes = [
     },
   },
   {
+    path: "/moje-prace",
+    component: MyWorksPanel,
+    meta: {
+      title: "Chytrá palice - Moje práce",
+      is_logged: true,
+      is_not_admin: true,
+    },
+  },
+  {
     path: "/nova-soutez",
     component: NewContestPanel,
     meta: {
@@ -147,6 +157,21 @@ router.beforeEach((to, from, next) => {
 router.beforeEach((to, from, next) => {
   if (to.matched.some((record) => record.meta.is_admin)) {
     if (!store.getters.isAdmin) {
+      next({
+        path: "/",
+        query: { err: "admin" },
+      });
+    } else {
+      next();
+    }
+  } else {
+    next();
+  }
+});
+
+router.beforeEach((to, from, next) => {
+  if (to.matched.some((record) => record.meta.is_not_admin)) {
+    if (store.getters.isAdmin) {
       next({
         path: "/",
         query: { err: "admin" },

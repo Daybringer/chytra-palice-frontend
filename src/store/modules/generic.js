@@ -6,9 +6,11 @@ const state = () => ({
   posts: JSON.parse(window.localStorage.getItem("posts")) || [],
   contests: JSON.parse(window.localStorage.getItem("contests")) || [],
   works: JSON.parse(window.localStorage.getItem("works")) || [],
+  tags: JSON.parse(window.localStorage.getItem("tags")) || [],
 });
 
 const getters = {
+  // Generic
   isLoggedIn: (state) => {
     return state.loggedIn;
   },
@@ -21,6 +23,16 @@ const getters = {
   getName: (state) => {
     return state.name;
   },
+  // getter for the next numeric ID (in posts,contests,works)
+  getNextID: (state) => (category) => {
+    if (state[category].length === 0) {
+      return 0;
+    } else {
+      return state[category][state[category].length - 1].ID + 1;
+    }
+  },
+
+  // Posts
   getPosts: (state) => {
     return state.posts;
   },
@@ -44,7 +56,7 @@ const getters = {
     }
     return null;
   },
-  // Works
+  // Works & tags
   getWorks: (state) => {
     return state.works;
   },
@@ -56,6 +68,19 @@ const getters = {
     }
     return null;
   },
+  getWorksByAuthor: (state) => (authorEmail) => {
+    const works = [];
+
+    state.works.forEach((work) => {
+      if (work.authorEmail == authorEmail) {
+        works.push(work);
+      }
+    });
+    return works;
+  },
+  getTags: (state) => {
+    return state.tags;
+  },
 };
 
 const actions = {
@@ -64,18 +89,22 @@ const actions = {
     commit("setUser", payload);
     commit("logIn");
   },
+
+  // Generic
+  logOut({ commit }) {
+    commit("logOut");
+  },
+  logIn({ commit }) {
+    commit("logIn");
+  },
+
+  // Posts
   savePosts({ state }) {
     window.localStorage.setItem("posts", JSON.stringify(state.posts));
   },
   removePost({ dispatch, commit }, id) {
     commit("removePost", id);
     dispatch("savePosts");
-  },
-  logOut({ commit }) {
-    commit("logOut");
-  },
-  logIn({ commit }) {
-    commit("logIn");
   },
   deleteAllPosts({ commit, dispatch }) {
     commit("deleteAllPosts");
@@ -115,6 +144,7 @@ const actions = {
     commit("addPost", newPost);
     dispatch("savePosts");
   },
+
   // Contests
   saveContests({ state }) {
     window.localStorage.setItem("contests", JSON.stringify(state.contests));
@@ -155,32 +185,45 @@ const actions = {
     window.localStorage.setItem("works", JSON.stringify(state.works));
   },
   newWork({ dispatch, commit, getters }, work) {
-    const { name, author, contestID, file } = work;
-    const date = new Date();
-
-    // TODO may move this to separate function
-    let id;
-    const works = getters.getWorks;
-    if (works.length === 0) {
-      id = 0;
-    } else {
-      id = works[works.length - 1].id + 1;
-    }
+    const {
+      name,
+      authorEmail,
+      authorName,
+      contestID,
+      file,
+      keywords,
+      maturita,
+      subject,
+    } = work;
+    const dateAdded = new Date();
+    const ID = getters.getNextID("works");
 
     const newWork = {
-      id,
-      date,
+      ID,
+      dateAdded,
       name: name.trim(),
-      author,
+      authorName,
+      authorEmail,
       contestID,
+      subject,
+      maturita,
+      keywords,
       // file
       fileName: file.name,
-      approved: false,
-      guarantor: "",
+      approvedState: "pending",
+      guarantorEmail: "",
+      guarantorMessage: "",
     };
 
     commit("addWork", newWork);
     dispatch("saveWorks");
+  },
+  addNewTags({ commit, dispatch }, tags) {
+    commit("addNewTags", tags);
+    dispatch("saveTags");
+  },
+  saveTags({ state }) {
+    window.localStorage.setItem("tags", JSON.stringify(state.tags));
   },
 };
 
@@ -223,9 +266,14 @@ const mutations = {
   addContest(state, contest) {
     state.contests.push(contest);
   },
-  // Works
+  // Works & keywords
   addWork(state, work) {
     state.works.push(work);
+  },
+  addNewTags(state, tags) {
+    tags.forEach((tag) => {
+      state.tags.push(tag);
+    });
   },
 };
 
