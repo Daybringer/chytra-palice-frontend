@@ -211,21 +211,23 @@ export default {
   computed: {
     works() {
       const works = this.$store.getters.getWorks;
-      works
-        .map((work) => {
-          const contest = this.$store.getters.getContestByID(work.contestID);
-          work.contest = contest.name;
-          work.category =
-            contest.category === "palice"
-              ? "Palice"
-              : contest.category === "palicka"
-              ? "Palička"
-              : "-";
-        })
-        .filter((work) => {
-          work.approvedState === "approved";
-        });
-      return works;
+      works.map((work) => {
+        const contest = this.$store.getters.getContestByID(work.contestID);
+        work.contest = contest.name;
+        work.category =
+          contest.category === "palice"
+            ? "Palice"
+            : contest.category === "palicka"
+            ? "Palička"
+            : "-";
+      });
+      return works.filter((work) => {
+        if (work) {
+          return work.approvedState === "approved";
+        } else {
+          return false;
+        }
+      });
     },
   },
   beforeMount() {

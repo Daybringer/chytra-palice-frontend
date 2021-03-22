@@ -18,6 +18,7 @@ import NewWorkPanel from "../views/NewWorkPanel.vue";
 import AllWorksPanel from "../views/AllWorksPanel.vue";
 import WorkPanel from "../views/WorkPanel.vue";
 import MyWorksPanel from "../views/MyWorksPanel.vue";
+import ApproveWorks from "../views/ApproveWorks.vue";
 
 Vue.use(VueRouter);
 
@@ -68,6 +69,15 @@ const routes = [
     component: NewWorkPanel,
     meta: {
       title: "Chytrá palice - Nahrání práce",
+      is_logged: true,
+    },
+  },
+  {
+    path: "/schvaleni",
+    component: ApproveWorks,
+    meta: {
+      title: "Chytrá palice - Schválení prací",
+      is_admin: true,
       is_logged: true,
     },
   },
@@ -132,6 +142,9 @@ const router = new VueRouter({
   mode: "history",
   base: process.env.BASE_URL,
   routes,
+  scrollBehavior() {
+    return { x: 0, y: 0 };
+  },
 });
 
 router.beforeEach((to, from, next) => {

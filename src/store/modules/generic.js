@@ -285,17 +285,17 @@ const mutations = {
   },
   rejectWork(state, { id, quarantorMessage }) {
     for (let i = 0; i < state.works.length; i++) {
-      if (state.works[i].id == id) {
-        state.works.approvedState = "rejected";
-        state.works.quarantorMessage = quarantorMessage;
+      if (state.works[i].ID == id) {
+        state.works[i].approvedState = "rejected";
+        state.works[i].quarantorMessage = quarantorMessage;
         return;
       }
     }
   },
   approveWork(state, id) {
     for (let i = 0; i < state.works.length; i++) {
-      if (state.works[i].id == id) {
-        state.works.approvedState = "approved";
+      if (state.works[i].ID == id) {
+        state.works[i].approvedState = "approved";
         return;
       }
     }

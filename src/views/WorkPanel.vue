@@ -65,16 +65,17 @@
         <p
           class="has-text-danger"
           v-if="
-            (isAdmin || userEmail === work.authorEmail) &&
-              work.approvedState === 'rejected'
+            (isAdmin || userEmail == work.authorEmail) &&
+              work.approvedState == 'rejected'
           "
         >
-          {{ work.guarantorMessage }}
+          <span class="has-text-grey-dark"><b>Zpráva: </b></span>
+          {{ work.quarantorMessage + "some text" }}
         </p>
       </div>
       <!-- Controls for admin - accept\reject and modal for it-->
-      <div v-if="isAdmin" class="buttons">
-        <b-button icon-left="check-bold" type="is-primary">
+      <div v-if="isAdmin && work.approvedState === 'pending'" class="buttons">
+        <b-button icon-left="check-bold" @click="approveWork" type="is-primary">
           Schválit práci
         </b-button>
         <b-button
@@ -98,7 +99,11 @@
           <div :id="id" @close="props.close" class="container">
             <div class="card p-5 is-justify-content-center">
               <b-field label="Zpráva pro autora">
-                <b-input maxlength="200" type="textarea"></b-input>
+                <b-input
+                  maxlength="200"
+                  type="textarea"
+                  v-model="quarantorMessage"
+                ></b-input>
               </b-field>
               <div class="buttons is-justify-content-center">
                 <b-button class="button is-danger" @click="rejectWork">
@@ -191,9 +196,16 @@ export default {
         quarantorMessage: this.quarantorMessage,
         id: this.id,
       });
+      this.$emit("close");
     },
     approveWork() {
-      this.$store.dispatch("approveWork");
+      this.$store.dispatch("approveWork", { id: this.id });
+      this.$buefy.toast.open({
+        duration: 5000,
+        message: `Článek byl úspěšně schválen`,
+        position: "is-top",
+        type: "is-primary",
+      });
     },
   },
   beforeMount() {

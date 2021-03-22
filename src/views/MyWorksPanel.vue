@@ -5,9 +5,9 @@
         <h2 class="title py-3">Moje práce</h2>
         <div
           v-for="work in myWorks"
-          :key="work.id"
+          :key="work.ID"
           class="card mt-4 is-clickable activeContestCard columns mx-0"
-          @click="routeToWork(work.id)"
+          @click="routeToWork(work.ID)"
         >
           <p
             class="column is-flex is-justify-content-center is-align-items-center has-text-weight-bold has-text-primary"

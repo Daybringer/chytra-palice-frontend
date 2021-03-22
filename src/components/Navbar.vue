@@ -1,11 +1,7 @@
 <template>
   <b-navbar class="is-fixed-top">
     <template #brand>
-      <b-navbar-item
-        class="logoSVGcontainer"
-        tag="router-link"
-        :to="{ path: '/' }"
-      >
+      <b-navbar-item class="logoSVGcontainer" @click="linkToRoot">
         <img
           src="../assets/palice_logo_verbal.svg"
           class="logoSVG"
@@ -31,6 +27,14 @@
         :to="{ path: '/moje-prace' }"
       >
         Moje práce
+      </b-navbar-item>
+
+      <b-navbar-item
+        v-if="logged && admin"
+        tag="router-link"
+        :to="{ path: '/schvaleni' }"
+      >
+        Práce ke schválení
       </b-navbar-item>
       <b-navbar-item
         v-if="logged && admin"
@@ -83,6 +87,14 @@ export default {
         position: "is-top",
         type: "is-info",
       });
+    },
+    linkToRoot() {
+      console.log(this.$route);
+      if (this.$route.path === "/") {
+        window.scrollTo(0, 0);
+      } else {
+        this.$router.push("/");
+      }
     },
   },
   computed: {
