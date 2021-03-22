@@ -151,17 +151,18 @@
           Stáhnout PDF
         </b-button>
       </div>
-
-      <!-- Comment section -->
     </div>
+    <!-- Comment section -->
+    <comment-section :workID="this.id"></comment-section>
   </div>
 </template>
 
 <script>
 import pdf from "vue-pdf";
+import CommentSection from "../components/CommentSection.vue";
 export default {
   name: "WorkPanel",
-  components: { pdf },
+  components: { pdf, CommentSection },
   computed: {
     isAdmin() {
       // TODO change to redirect on "pending" or "rejected"

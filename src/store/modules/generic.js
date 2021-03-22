@@ -7,6 +7,7 @@ const state = () => ({
   contests: JSON.parse(window.localStorage.getItem("contests")) || [],
   works: JSON.parse(window.localStorage.getItem("works")) || [],
   tags: JSON.parse(window.localStorage.getItem("tags")) || [],
+  comments: JSON.parse(window.localStorage.getItem("comments")) || {},
 });
 
 const getters = {
@@ -80,6 +81,17 @@ const getters = {
   },
   getTags: (state) => {
     return state.tags;
+  },
+  // Comments
+  getCommentCollectionByWorkID: (state) => (workID) => {
+    if (state.comments[workID]) {
+      return state.comments[workID];
+    } else {
+      null;
+    }
+  },
+  getIDOfLastComment: (state) => (workID) => {
+    return state.comments[workID][state.comments[workID].length - 1].ID;
   },
 };
 
@@ -233,6 +245,35 @@ const actions = {
   saveTags({ state }) {
     window.localStorage.setItem("tags", JSON.stringify(state.tags));
   },
+
+  // Comments
+
+  addComment(
+    { commit, state, dispatch },
+    { authorEmail, authorName, workID, message }
+  ) {
+    let ID;
+    if (Object.keys(state.comments).length === 0) {
+      ID = 0;
+    } else {
+      if (!state.comments[workID]) {
+        ID = 0;
+      } else {
+        ID =
+          state.comments[workID][Object.keys(state.comments[workID]).length - 1]
+            .ID + 1;
+      }
+    }
+
+    const newComment = { ID, authorEmail, authorName, workID, message };
+
+    commit("addComment", newComment);
+    dispatch("saveComments");
+  },
+
+  saveComments({ state }) {
+    window.localStorage.setItem("comments", JSON.stringify(state.comments));
+  },
 };
 
 const mutations = {
@@ -299,6 +340,11 @@ const mutations = {
         return;
       }
     }
+  },
+  // Comments
+  addComment(state, comment) {
+    if (!state.comments[comment.workID]) state.comments[comment.workID] = [];
+    state.comments[comment.workID].push(comment);
   },
 };
 

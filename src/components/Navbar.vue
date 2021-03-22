@@ -89,7 +89,6 @@ export default {
       });
     },
     linkToRoot() {
-      console.log(this.$route);
       if (this.$route.path === "/") {
         window.scrollTo(0, 0);
       } else {
