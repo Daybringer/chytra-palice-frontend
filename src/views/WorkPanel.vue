@@ -44,6 +44,7 @@
         </p>
         <!-- approvedState  (only for owner and admin)-->
         <p
+          v-show="isAdmin || userEmail == work.authorEmail"
           :class="
             work.approvedState === 'approved'
               ? 'has-text-success'

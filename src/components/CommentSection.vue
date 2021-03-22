@@ -7,6 +7,8 @@
         :key="comment.ID"
         :author="comment.authorName"
         :message="comment.message"
+        :ID="comment.ID"
+        :workID="comment.workID"
       />
 
       <div class="field has-addons is-justify-content-center">

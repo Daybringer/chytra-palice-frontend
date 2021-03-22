@@ -274,6 +274,11 @@ const actions = {
   saveComments({ state }) {
     window.localStorage.setItem("comments", JSON.stringify(state.comments));
   },
+
+  deleteComment({ commit, dispatch }, { ID, workID }) {
+    commit("deleteComment", { ID, workID });
+    dispatch("saveComments");
+  },
 };
 
 const mutations = {
@@ -345,6 +350,21 @@ const mutations = {
   addComment(state, comment) {
     if (!state.comments[comment.workID]) state.comments[comment.workID] = [];
     state.comments[comment.workID].push(comment);
+  },
+  deleteComment(state, { ID, workID }) {
+    let arrayIndex;
+    for (let i = 0; i < state.comments[workID].length; i++) {
+      if (state.comments[workID][i].ID === ID) {
+        arrayIndex = i;
+      }
+    }
+    console.log(
+      ID,
+      workID,
+      state.comments,
+      state.comments[workID].splice(arrayIndex, 1)
+    );
+    state.comments[workID] = state.comments[workID].splice(arrayIndex, 1);
   },
 };
 
