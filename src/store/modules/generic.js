@@ -62,7 +62,7 @@ const getters = {
   },
   getWorkByID: (state) => (id) => {
     for (let i = 0; i < state.works.length; i++) {
-      if (state.works[i].id == id) {
+      if (state.works[i].ID == id) {
         return state.works[i];
       }
     }
@@ -218,6 +218,14 @@ const actions = {
     commit("addWork", newWork);
     dispatch("saveWorks");
   },
+  approveWork({ commit, dispatch }, { id }) {
+    commit("approveWork", id);
+    dispatch("saveWorks");
+  },
+  rejectWork({ commit, dispatch }, { id, quarantorMessage }) {
+    commit("rejectWork", { id, quarantorMessage });
+    dispatch("saveWorks");
+  },
   addNewTags({ commit, dispatch }, tags) {
     commit("addNewTags", tags);
     dispatch("saveTags");
@@ -274,6 +282,23 @@ const mutations = {
     tags.forEach((tag) => {
       state.tags.push(tag);
     });
+  },
+  rejectWork(state, { id, quarantorMessage }) {
+    for (let i = 0; i < state.works.length; i++) {
+      if (state.works[i].id == id) {
+        state.works.approvedState = "rejected";
+        state.works.quarantorMessage = quarantorMessage;
+        return;
+      }
+    }
+  },
+  approveWork(state, id) {
+    for (let i = 0; i < state.works.length; i++) {
+      if (state.works[i].id == id) {
+        state.works.approvedState = "approved";
+        return;
+      }
+    }
   },
 };
 

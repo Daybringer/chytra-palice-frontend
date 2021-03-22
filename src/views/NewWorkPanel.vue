@@ -152,10 +152,10 @@ export default {
           file: this.data.file,
           // TODO  Check google domain for email and fill authorName
           authorName: this.isAdmin ? this.data.authorEmail : this.author,
-          authorEmail: this.data.authorEmail,
+          authorEmail: this.data.email,
           contestID: this.contestID,
           keywords: this.tags,
-          maturita: this.isMaturita,
+          maturita: this.data.isMaturita,
           subject: this.data.subject,
         });
         this.$buefy.toast.open({

@@ -175,7 +175,7 @@ export default {
   name: "AllWorksPanel",
   methods: {
     tableClick(row) {
-      this.$router.push(`/prace/${row.id}`);
+      this.$router.push(`/prace/${row.ID}`);
     },
     filter() {
       console.log("filtering");
@@ -211,16 +211,20 @@ export default {
   computed: {
     works() {
       const works = this.$store.getters.getWorks;
-      works.map((work) => {
-        const contest = this.$store.getters.getContestByID(work.contestID);
-        work.contest = contest.name;
-        work.category =
-          contest.category === "palice"
-            ? "Palice"
-            : contest.category === "palicka"
-            ? "Palička"
-            : "-";
-      });
+      works
+        .map((work) => {
+          const contest = this.$store.getters.getContestByID(work.contestID);
+          work.contest = contest.name;
+          work.category =
+            contest.category === "palice"
+              ? "Palice"
+              : contest.category === "palicka"
+              ? "Palička"
+              : "-";
+        })
+        .filter((work) => {
+          work.approvedState === "approved";
+        });
       return works;
     },
   },

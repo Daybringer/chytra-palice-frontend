@@ -1,9 +1,216 @@
 <template>
-  <div class="container my-6"><div class="box"></div></div>
+  <div class="container">
+    <div class="box">
+      <div class="block">
+        <!-- Work's name -->
+        <h1 class="title has-text-primary">{{ work.name }}</h1>
+        <!-- Author -->
+        <h2 class="subtitle has-text-gray">
+          {{ work.authorName }}
+        </h2>
+        <!-- Date -->
+        <p>
+          <b>Přidáno: </b
+          >{{ new Date(work.dateAdded).toLocaleDateString("cs") }}
+        </p>
+        <!-- Contest -->
+        <p>
+          <b>Zařazeno do soutěže: </b
+          ><router-link :to="`/souteze/${contest.id}`">{{
+            contest.name
+          }}</router-link>
+        </p>
+        <!-- Subject -->
+        <p>
+          <b>Předmět: </b
+          >{{
+            work.subject === "hst"
+              ? "HST"
+              : work.category === "cestina"
+              ? "Český jazyk"
+              : work.category === "dejepis"
+              ? "Dějepis"
+              : "Jiné"
+          }}
+        </p>
+        <!-- Is Maturita project -->
+        <p><b>Maturitní práce: </b>{{ work.maturita ? "Ano" : "Ne" }}</p>
+        <!-- Keywords -->
+        <p>
+          <b>Klíčová slova: </b>
+          <span v-for="tag in work.keywords" :key="tag" class="tag m-1 is-link">
+            {{ tag }}
+          </span>
+        </p>
+        <!-- approvedState  (only for owner and admin)-->
+        <p
+          :class="
+            work.approvedState === 'approved'
+              ? 'has-text-success'
+              : work.approvedState === 'rejected'
+              ? 'has-text-danger'
+              : 'has-text-info'
+          "
+        >
+          <span class="has-text-grey-dark"><b>Stav: </b></span>
+          {{
+            work.approvedState === "approved"
+              ? "Schváleno"
+              : work.approvedState === "rejected"
+              ? "Zámítnuto"
+              : "Čekající na schválení"
+          }}
+        </p>
+        <!-- Guarantor message -->
+        <p
+          class="has-text-danger"
+          v-if="
+            (isAdmin || userEmail === work.authorEmail) &&
+              work.approvedState === 'rejected'
+          "
+        >
+          {{ work.guarantorMessage }}
+        </p>
+      </div>
+      <!-- Controls for admin - accept\reject and modal for it-->
+      <div v-if="isAdmin" class="buttons">
+        <b-button icon-left="check-bold" type="is-primary">
+          Schválit práci
+        </b-button>
+        <b-button
+          icon-left="close-thick"
+          @click="isComponentModalActive = true"
+          type="is-danger"
+          >Zamítnout práci</b-button
+        >
+      </div>
+
+      <b-modal
+        v-model="isComponentModalActive"
+        has-modal-card
+        trap-focus
+        :destroy-on-hide="true"
+        aria-role="dialog"
+        aria-label="Write message"
+        aria-modal
+      >
+        <template #default="props">
+          <div :id="id" @close="props.close" class="container">
+            <div class="card p-5 is-justify-content-center">
+              <b-field label="Zpráva pro autora">
+                <b-input maxlength="200" type="textarea"></b-input>
+              </b-field>
+              <div class="buttons is-justify-content-center">
+                <b-button class="button is-danger" @click="rejectWork">
+                  Zamítnout práci
+                </b-button>
+              </div>
+            </div>
+          </div>
+        </template>
+      </b-modal>
+
+      <!-- PDF Viewer -->
+      <div class="has-text-center block">
+        <div class="buttons is-justify-content-center">
+          <b-button
+            type="is-primary"
+            icon-left="chevron-left"
+            @click="currPage > 1 ? (currPage -= 1) : (currPage = 1)"
+          ></b-button>
+          <b-button disabled>{{ `${currPage}/${pageCount}` }}</b-button>
+          <b-button
+            type="is-primary"
+            icon-right="chevron-right"
+            @click="
+              currPage < pageCount ? (currPage += 1) : (currPage = pageCount)
+            "
+          ></b-button>
+        </div>
+        <pdf
+          @error="pdfFailed"
+          :src="pdfSrc"
+          :page="currPage"
+          @num-pages="setPageCount"
+          style="max-width:600px;margin-left:auto;margin-right:auto; border:gray solid 2px;"
+          class="block"
+        ></pdf>
+      </div>
+
+      <!-- Download buttons-->
+      <div class="buttons is-justify-content-center block">
+        <b-button type="is-info" icon-right="book-open-page-variant">
+          Stáhnout EPUB
+        </b-button>
+        <b-button type="is-info" icon-right="file-pdf">
+          Stáhnout PDF
+        </b-button>
+      </div>
+
+      <!-- Comment section -->
+    </div>
+  </div>
 </template>
 
 <script>
-export default {};
+import pdf from "vue-pdf";
+export default {
+  name: "WorkPanel",
+  components: { pdf },
+  computed: {
+    isAdmin() {
+      // TODO change to redirect on "pending" or "rejected"
+      return this.$store.getters.isAdmin;
+    },
+    id() {
+      return this.$route.params.id;
+    },
+    userEmail() {
+      return this.$store.getters.getEmail;
+    },
+    contest() {
+      return this.$store.getters.getContestByID(this.work.contestID);
+    },
+  },
+  methods: {
+    pdfFailed(error) {
+      console.log("Error has occured: ", error);
+    },
+    fetchWork() {
+      // TODO introduce restirictive access
+      this.work = this.$store.getters.getWorkByID(this.id);
+      if (!this.work) {
+        this.$router.push({ path: "/", query: { err: "conNotFound" } });
+      }
+    },
+    setPageCount(numberOfPages) {
+      this.pageCount = numberOfPages;
+    },
+    rejectWork() {
+      this.$store.dispatch("rejectWork", {
+        quarantorMessage: this.quarantorMessage,
+        id: this.id,
+      });
+    },
+    approveWork() {
+      this.$store.dispatch("approveWork");
+    },
+  },
+  beforeMount() {
+    this.fetchWork();
+  },
+  data() {
+    return {
+      isComponentModalActive: false,
+      quarantorMessage: "",
+      work: {},
+      currPage: 1,
+      pageCount: 0,
+      pdfSrc:
+        "https://cdn.rawgit.com/mozilla/pdf.js/c6e8ca86/test/pdfs/freeculture.pdf",
+    };
+  },
+};
 </script>
 
 <style scoped></style>
