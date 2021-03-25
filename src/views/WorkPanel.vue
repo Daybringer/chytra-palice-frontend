@@ -204,7 +204,7 @@ export default {
       this.$store.dispatch("approveWork", { id: this.id });
       this.$buefy.toast.open({
         duration: 5000,
-        message: `Článek byl úspěšně schválen`,
+        message: `Práce byla zařazena do soutěže`,
         position: "is-top",
         type: "is-primary",
       });

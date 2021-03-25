@@ -49,8 +49,32 @@
       </div>
       <div class="block has-text-centered">
         <h2 class="title">Nominované práce</h2>
-        <span v-show="contest.nominated.length === 0">Je tu nějak prázdno</span>
-        <div class="block"></div>
+        <span v-show="approvedWorks.length === 0">Je tu nějak prázdno</span>
+        <div class="block">
+          <div
+            v-for="work in approvedWorks"
+            :key="work.ID"
+            class="card mt-4 is-clickable activeContestCard columns mx-0"
+            @click="routeToWork(work.ID)"
+          >
+            <p
+              class="column is-flex is-justify-content-center is-align-items-center has-text-weight-bold has-text-primary"
+            >
+              {{ work.name }}
+            </p>
+
+            <p
+              class="column is-flex is-justify-content-center is-align-items-center has-text-info has-text-gray"
+            >
+              {{ work.authorName }}
+            </p>
+            <p
+              class="column is-flex is-justify-content-center is-align-items-center"
+            >
+              {{ "x0 navštívení" }}
+            </p>
+          </div>
+        </div>
       </div>
     </div>
   </div>
@@ -70,6 +94,7 @@ export default {
         this.error = true;
       }
     },
+
     formatDate(dateString) {
       return this.$formateDate(dateString);
     },
@@ -87,10 +112,21 @@ export default {
     admin() {
       return this.$store.getters.isAdmin;
     },
+    works() {
+      const works = [];
+      this.contest.nominated.forEach((id) => {
+        works.push(this.$store.getters.getWorkByID(id));
+      });
+      return works;
+    },
+    approvedWorks() {
+      return this.works.filter((work) => work.approvedState === "approved");
+    },
   },
   beforeMount() {
     this.loadContent();
     this.setTitle();
+    console.log(this.contest.nominated);
   },
 };
 </script>

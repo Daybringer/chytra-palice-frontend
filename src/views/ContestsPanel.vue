@@ -22,7 +22,9 @@
           <p
             class="column is-flex is-justify-content-center is-align-items-center"
           >
-            {{ numberOfNominatedToString(contest.nominated) }}
+            {{
+              numberOfApprovedNominated(getWorksFromIDArr(contest.nominated))
+            }}
           </p>
           <div
             class="column has-text-centered is-justify-content-center is-align-items-center is-flex"
@@ -161,9 +163,21 @@ export default {
     formatDate(dateString) {
       return this.$formateDate(dateString);
     },
-    numberOfNominatedToString(nominated) {
-      return `${nominated.length} ${
-        nominated.length === 0 || nominated.length > 4 ? "prací" : "práce"
+    filterOnlyApproved(works) {
+      return works.filter((work) => work.approvedState === "approved");
+    },
+    getWorksFromIDArr(idArr) {
+      const works = [];
+      idArr.forEach((id) => {
+        works.push(this.$store.getters.getWorkByID(id));
+      });
+      return works;
+    },
+    numberOfApprovedNominated(nominated) {
+      console.log(nominated);
+      const filtered = this.filterOnlyApproved(nominated);
+      return `${filtered.length} ${
+        filtered.length === 0 || filtered.length > 4 ? "prací" : "práce"
       }`;
     },
     isContestActive(dateString) {

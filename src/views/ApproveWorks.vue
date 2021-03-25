@@ -16,6 +16,12 @@
           </p>
 
           <p
+            class="column is-flex is-justify-content-center is-align-items-center has-text-weight-bold has-text-grey"
+          >
+            {{ getContestByID(work.contestID).name }}
+          </p>
+
+          <p
             class="column is-flex is-justify-content-center is-align-items-center has-text-grey"
           >
             {{ work.authorName }}
@@ -36,6 +42,9 @@ export default {
     },
   },
   methods: {
+    getContestByID(id) {
+      return this.$store.getters.getContestByID(id);
+    },
     routeToWork(id) {
       this.$router.push(`/prace/${id}`);
     },

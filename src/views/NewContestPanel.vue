@@ -145,12 +145,23 @@ export default {
           this.errors.description
         )
       ) {
-        this.$store.dispatch("newContest", {
-          name: this.contest.name,
-          endDate: this.contest.endDate,
-          category: this.contest.category,
-          description: this.contest.description,
-        });
+        this.$store
+          .dispatch("newContest", {
+            name: this.contest.name,
+            endDate: this.contest.endDate,
+            category: this.contest.category,
+            description: this.contest.description,
+          })
+          .then((id) => {
+            this.$buefy.toast.open({
+              duration: 5000,
+              message: `Soutěž byla uložena`,
+              position: "is-top",
+              type: "is-primary",
+            });
+
+            this.$router.push(`/souteze/${id}`);
+          });
       }
     },
     async validateAll() {

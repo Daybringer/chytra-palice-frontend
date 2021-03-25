@@ -147,27 +147,30 @@ export default {
       this.validate("email");
       this.validateFile();
       if (!(this.errors.name || this.errors.email || this.errors.file)) {
-        this.$store.dispatch("newWork", {
-          name: this.data.name,
-          file: this.data.file,
-          // TODO  Check google domain for email and fill authorName
-          authorName: this.isAdmin ? this.data.authorEmail : this.author,
-          authorEmail: this.data.email,
-          contestID: this.contestID,
-          keywords: this.tags,
-          maturita: this.data.isMaturita,
-          subject: this.data.subject,
-        });
-        this.$buefy.toast.open({
-          duration: 5000,
-          message: `Soutěžní práce byla úspěšně nahrána`,
-          position: "is-top",
-          type: "is-primary",
-        });
+        this.$store
+          .dispatch("newWork", {
+            name: this.data.name,
+            file: this.data.file,
+            // TODO  Check google domain for email and fill authorName
+            authorName: this.isAdmin ? this.data.authorEmail : this.author,
+            authorEmail: this.data.email,
+            contestID: this.contestID,
+            keywords: this.tags,
+            maturita: this.data.isMaturita,
+            subject: this.data.subject,
+          })
+          .then((id) => {
+            this.$buefy.toast.open({
+              duration: 5000,
+              message: `Soutěžní práce byla úspěšně nahrána`,
+              position: "is-top",
+              type: "is-primary",
+            });
+            console.log(id);
+            this.updateTags();
 
-        this.updateTags();
-
-        this.$router.push("/");
+            this.$router.push(`/prace/${id}`);
+          });
       }
     },
     formatDate(date = new Date()) {
