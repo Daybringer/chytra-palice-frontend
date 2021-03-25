@@ -159,37 +159,41 @@ const actions = {
 
   // Contests
   saveContests({ state }) {
+    console.log("saving contests");
     window.localStorage.setItem("contests", JSON.stringify(state.contests));
   },
 
   newContest({ dispatch, commit, getters }, contest) {
-    const { name, endDate, category, description } = contest;
-    const date = new Date();
+    return new Promise((resolve) => {
+      const { name, endDate, category, description } = contest;
+      const date = new Date();
 
-    // TODO may move this to separate function
-    let id;
-    const contests = getters.getContests;
-    if (contests.length === 0) {
-      id = 0;
-    } else {
-      id = contests[contests.length - 1].id + 1;
-    }
+      // TODO may move this to separate function
+      let id;
+      const contests = getters.getContests;
+      if (contests.length === 0) {
+        id = 0;
+      } else {
+        id = contests[contests.length - 1].id + 1;
+      }
 
-    const newContest = {
-      id,
-      dateCreated: date,
-      dateEnding: endDate,
-      name: name.trim(),
-      category,
-      description: description.trim(),
-      //
-      isClosed: false,
-      winners: [],
-      nominated: [],
-    };
+      const newContest = {
+        id,
+        dateCreated: date,
+        dateEnding: endDate,
+        name: name.trim(),
+        category,
+        description: description.trim(),
+        //
+        isClosed: false,
+        winners: [],
+        nominated: [],
+      };
 
-    commit("addContest", newContest);
-    dispatch("saveContests");
+      commit("addContest", newContest);
+      dispatch("saveContests");
+      resolve(id);
+    });
   },
 
   // Works
@@ -197,38 +201,46 @@ const actions = {
     window.localStorage.setItem("works", JSON.stringify(state.works));
   },
   newWork({ dispatch, commit, getters }, work) {
-    const {
-      name,
-      authorEmail,
-      authorName,
-      contestID,
-      file,
-      keywords,
-      maturita,
-      subject,
-    } = work;
-    const dateAdded = new Date();
-    const ID = getters.getNextID("works");
+    return new Promise((resolve) => {
+      const {
+        name,
+        authorEmail,
+        authorName,
+        contestID,
+        file,
+        keywords,
+        maturita,
+        subject,
+      } = work;
+      const dateAdded = new Date();
+      const ID = getters.getNextID("works");
 
-    const newWork = {
-      ID,
-      dateAdded,
-      name: name.trim(),
-      authorName,
-      authorEmail,
-      contestID,
-      subject,
-      maturita,
-      keywords,
-      // file
-      fileName: file.name,
-      approvedState: "pending",
-      guarantorEmail: "",
-      guarantorMessage: "",
-    };
+      const newWork = {
+        ID,
+        dateAdded,
+        name: name.trim(),
+        authorName,
+        authorEmail,
+        contestID,
+        subject,
+        maturita,
+        keywords,
+        // file
+        fileName: file.name,
+        approvedState: "pending",
+        guarantorEmail: "",
+        guarantorMessage: "",
+      };
 
-    commit("addWork", newWork);
-    dispatch("saveWorks");
+      commit("addWork", newWork);
+      commit("addWorkToContest", {
+        contestID: newWork.contestID,
+        work: newWork,
+      });
+      dispatch("saveWorks");
+      dispatch("saveContests");
+      resolve(ID);
+    });
   },
   approveWork({ commit, dispatch }, { id }) {
     commit("approveWork", id);
@@ -256,7 +268,7 @@ const actions = {
     if (Object.keys(state.comments).length === 0) {
       ID = 0;
     } else {
-      if (!state.comments[workID]) {
+      if (Object.keys(state.comments[workID]).length === 0) {
         ID = 0;
       } else {
         ID =
@@ -320,6 +332,14 @@ const mutations = {
   addContest(state, contest) {
     state.contests.push(contest);
   },
+  addWorkToContest(state, { contestID, work }) {
+    for (let i = 0; i < state.contests.length; i++) {
+      if (state.contests[i].id == contestID) {
+        state.contests[i].nominated.push(work.ID);
+        return;
+      }
+    }
+  },
   // Works & keywords
   addWork(state, work) {
     state.works.push(work);
@@ -358,13 +378,7 @@ const mutations = {
         arrayIndex = i;
       }
     }
-    console.log(
-      ID,
-      workID,
-      state.comments,
-      state.comments[workID].splice(arrayIndex, 1)
-    );
-    state.comments[workID] = state.comments[workID].splice(arrayIndex, 1);
+    state.comments[workID].splice(arrayIndex, 1);
   },
 };
 

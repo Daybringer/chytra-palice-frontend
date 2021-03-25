@@ -16,7 +16,7 @@
           <b-input
             class="is-inline"
             v-model="newComment"
-            @keydown.enter="saveComment"
+            @keyup.enter.native="saveComment"
             placeholder="Napiš komentář"
           ></b-input>
         </div>
