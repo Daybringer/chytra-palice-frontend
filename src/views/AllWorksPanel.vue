@@ -178,7 +178,6 @@ export default {
       this.$router.push(`/prace/${row.ID}`);
     },
     filter() {
-      console.log("filtering");
       const filteredWorks = [];
       this.works.forEach((work) => {
         if (this.search.name) {

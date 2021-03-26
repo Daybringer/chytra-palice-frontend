@@ -122,6 +122,7 @@ const actions = {
     commit("deleteAllPosts");
     dispatch("savePosts");
   },
+
   editPost({ dispatch, commit, getters }, post) {
     const { id, title, content } = post;
     // Object copy <= Can't change original object outside of mutations
@@ -159,7 +160,6 @@ const actions = {
 
   // Contests
   saveContests({ state }) {
-    console.log("saving contests");
     window.localStorage.setItem("contests", JSON.stringify(state.contests));
   },
 
@@ -186,7 +186,7 @@ const actions = {
         description: description.trim(),
         //
         isClosed: false,
-        winners: [],
+        winners: [[], [], []],
         nominated: [],
       };
 
@@ -196,12 +196,20 @@ const actions = {
     });
   },
 
+  setWinners({ commit, dispatch }, { contestID, winners }) {
+    commit("setWinners", { contestID, winners });
+    dispatch("saveContests");
+  },
+  removeContest({ commit, dispatch }, { contestID }) {
+    commit("removeContest", { contestID });
+    dispatch("saveContests");
+  },
   // Works
   saveWorks({ state }) {
     window.localStorage.setItem("works", JSON.stringify(state.works));
   },
   newWork({ dispatch, commit, getters }, work) {
-    return new Promise((resolve) => {
+    return new Promise((resolve, reject) => {
       const {
         name,
         authorEmail,
@@ -212,6 +220,15 @@ const actions = {
         maturita,
         subject,
       } = work;
+
+      // Checking wether is contest still running
+      const contest = getters.getContestByID(contestID);
+      if (
+        contest.isClosed ||
+        Number(new Date(contest.endDate).toString()) < Number(Date.now())
+      )
+        reject();
+
       const dateAdded = new Date();
       const ID = getters.getNextID("works");
 
@@ -333,10 +350,27 @@ const mutations = {
     state.contests.push(contest);
   },
   addWorkToContest(state, { contestID, work }) {
-    for (let i = 0; i < state.contests.length; i++) {
-      if (state.contests[i].id == contestID) {
-        state.contests[i].nominated.push(work.ID);
-        return;
+    state.contests.forEach((contest) => {
+      if (contest.id === contestID) {
+        contest.nominated.push(work.ID);
+        // Should break here, every() might be better suited
+      }
+    });
+  },
+  setWinners(state, { contestID, winners }) {
+    state.contests.forEach((contest) => {
+      if (contest.id == contestID) {
+        contest.winners = winners;
+        contest.isClosed = true;
+        // Should break here, every() might be better suited
+      }
+    });
+  },
+  removeContest(state, { contestID }) {
+    for (let x = 0; x < state.contests.length; x++) {
+      if (state.contests[x].id == contestID) {
+        state.contests.splice(x, 1);
+        break;
       }
     }
   },

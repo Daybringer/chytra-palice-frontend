@@ -27,6 +27,7 @@
             {{ work.authorName }}
           </p>
         </div>
+        <h3 v-show="works.length === 0" class="subtitle py-3">Vše vyřízeno</h3>
       </div>
     </div>
   </div>

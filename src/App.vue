@@ -28,6 +28,12 @@ body {
 #app {
   position: relative;
 }
+.activeContestCard:hover {
+  transform: scale(105%);
+}
+.activeContestCard:focus-within {
+  transform: scale(105%);
+}
 .content-wrap {
   min-height: calc(100vh - 6rem);
   padding-bottom: 6rem;
@@ -59,21 +65,41 @@ body {
 @import "~bulma/sass/utilities/_all";
 $navbar-height: 3.5rem;
 
-// Set your colors
 $primary: #80b918;
 $primary-light: findLightColor($primary);
 $primary-dark: findDarkColor($primary);
 $primary-invert: findColorInvert($primary);
-$twitter: #4099ff;
-$twitter-invert: findColorInvert($twitter);
 
-// Lists and maps
 $custom-colors: null !default;
 $custom-shades: null !default;
 
-// Setup $colors to use as bulma classes (e.g. 'is-twitter')
+// Contest border
+.has-border-gold {
+  border: 3px solid darken($yellow, 15%);
+}
+.has-border-silver {
+  border: 3px solid $grey-light;
+}
+.has-border-bronze {
+  border: 3px solid $orange;
+}
+
+// Mergemaps
+
 $colors: mergeColorMaps(
   (
+    "gold": (
+      $yellow,
+      $white,
+    ),
+    "silver": (
+      $grey-light,
+      $white,
+    ),
+    "bronze": (
+      $orange,
+      $white,
+    ),
     "white": (
       $white,
       $black,

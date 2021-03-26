@@ -156,7 +156,6 @@ export default {
       this.$router.push(`/souteze/${id}`);
     },
     routeToNewWork(id) {
-      console.log("Redirect from contests overview to new work panel");
       this.$router.push(`/nova-prace/${id}`);
     },
 
@@ -174,7 +173,6 @@ export default {
       return works;
     },
     numberOfApprovedNominated(nominated) {
-      console.log(nominated);
       const filtered = this.filterOnlyApproved(nominated);
       return `${filtered.length} ${
         filtered.length === 0 || filtered.length > 4 ? "prací" : "práce"
@@ -198,11 +196,5 @@ export default {
   width: auto;
   padding: 0;
   margin: 0;
-}
-.activeContestCard:hover {
-  transform: scale(105%);
-}
-.activeContestCard:focus-within {
-  transform: scale(105%);
 }
 </style>

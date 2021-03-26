@@ -145,8 +145,16 @@ export default {
     saveWork() {
       this.validate("name");
       this.validate("email");
+      this.validate("subject");
       this.validateFile();
-      if (!(this.errors.name || this.errors.email || this.errors.file)) {
+      if (
+        !(
+          this.errors.name ||
+          this.errors.email ||
+          this.errors.subject ||
+          this.errors.file
+        )
+      ) {
         this.$store
           .dispatch("newWork", {
             name: this.data.name,
@@ -166,10 +174,16 @@ export default {
               position: "is-top",
               type: "is-primary",
             });
-            console.log(id);
             this.updateTags();
-
             this.$router.push(`/prace/${id}`);
+          })
+          .catch(() => {
+            this.$buefy.toast.open({
+              duration: 5000,
+              message: `Soutěž je již uzavřena`,
+              position: "is-top",
+              type: "is-primary",
+            });
           });
       }
     },
@@ -290,7 +304,13 @@ export default {
     return {
       errors: { name: "", email: "", file: "", subject: "" },
       checked: { name: "", email: "", file: "", subject: "" },
-      data: { name: "", email: "", file: null, isMaturita: false, subject: "" },
+      data: {
+        name: "",
+        email: "",
+        file: null,
+        isMaturita: false,
+        subject: "",
+      },
       authorName: "",
       tags: [],
       // Load the tags from backend
