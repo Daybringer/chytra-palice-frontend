@@ -1,3 +1,7 @@
+import Repository from "@/repositories/Repository";
+import { RepositoryFactory } from "@/repositories/RepositoryFactory";
+const AuthRepository = RepositoryFactory.get("auth");
+
 const state = () => ({
   loggedIn: true,
   admin: true,
@@ -93,17 +97,51 @@ const getters = {
 };
 
 const actions = {
+  // General
+
+  logout({ commit }) {
+    commit("logout");
+  },
+
+  // Authentication
+  login({ commit }, authCode) {
+    return new Promise((resolve, reject) => {
+      AuthRepository.googleLogin(authCode)
+        .then((res) => {
+          console.log(res);
+          commit("login");
+          resolve();
+        })
+        .catch(() => {
+          commit("logout");
+          reject();
+        });
+    });
+  },
+  setBearer(token) {
+    Object.assign(Repository.defaults, {
+      headers: { Authorization: "Bearer " + token },
+    });
+  },
+  // consumeAuthResponse(response) {
+  //   const data = response.data;
+  //   const token = data.payload.token;
+  //   this.saveUserProfile(data.user);
+  //   this.saveToken(token);
+  // },
+  // saveToken(token) {
+  //   localStorage.setItem("access-token", token);
+  //   this.setBearer(token);
+  //   this.token = token;
+  // },
+  // setBearer(token) {
+  //   Object.assign(Repository.defaults, {
+  //     headers: { Authorization: "Bearer " + token },
+  //   });
+  // },
   // Dev methods
   changeUser({ commit }, payload) {
     commit("setUser", payload);
-    commit("logIn");
-  },
-
-  // Generic
-  logOut({ commit }) {
-    commit("logOut");
-  },
-  logIn({ commit }) {
     commit("logIn");
   },
 
@@ -308,6 +346,15 @@ const actions = {
 };
 
 const mutations = {
+  // General
+  login(state) {
+    state.loggedIn = true;
+  },
+  logout(state) {
+    state.loggedIn = false;
+    state.name = "";
+    state.email = "";
+  },
   // Dev mutation
   setUser(state, { name, email, admin }) {
     state.name = name;
@@ -335,12 +382,6 @@ const mutations = {
         return;
       }
     }
-  },
-  logOut(state) {
-    state.loggedIn = false;
-  },
-  logIn(state) {
-    state.loggedIn = true;
   },
   // Contests
   addContest(state, contest) {

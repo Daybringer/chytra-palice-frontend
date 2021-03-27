@@ -53,10 +53,10 @@
       <!-- Login/Logout button  -->
       <b-navbar-item tag="div">
         <div class="buttons">
-          <button v-if="!logged" @click="logIn" class="button is-primary">
+          <button v-if="!logged" @click="login" class="button is-primary">
             <strong>Přihlásit se</strong>
           </button>
-          <button v-if="logged" @click="logOut" class="button is-primary">
+          <button v-if="logged" @click="logout" class="button is-primary">
             <strong>Odhlásit se</strong>
           </button>
         </div>
@@ -69,24 +69,52 @@
 export default {
   name: "Navbar",
   methods: {
-    logIn() {
-      this.$store.dispatch("logIn");
-      this.$buefy.toast.open({
-        duration: 5000,
-        message: `Byl(a) jste úspěšně přihlášen(a)`,
-        position: "is-top",
-        type: "is-primary",
-      });
+    login() {
+      this.$gAuth
+        .getAuthCode()
+        .then((authCode) => {
+          console.log(authCode);
+          this.$store.dispatch("login", authCode);
+          this.$buefy.toast.open({
+            duration: 5000,
+            message: `Byl(a) jste úspěšně přihlášen(a)`,
+            position: "is-top",
+            type: "is-primary",
+          });
+        })
+        .catch((err) => {
+          console.log(err);
+          this.$buefy.toast.open({
+            duration: 5000,
+            message: `Přihlášení bylo neúspešné`,
+            position: "is-top",
+            type: "is-warning",
+          });
+        });
     },
-    logOut() {
-      this.$store.dispatch("logOut");
-      this.$router.push("/");
-      this.$buefy.toast.open({
-        duration: 5000,
-        message: `Byl(a) jste úspěšně odhlášen(a)`,
-        position: "is-top",
-        type: "is-info",
-      });
+    logout() {
+      this.$gAuth
+        .signOut()
+        .then(() => {
+          this.$store.dispatch("logout");
+          if (this.$route.path !== "/") this.$router.push("/");
+          this.$buefy.toast.open({
+            duration: 5000,
+            message: `Byl(a) jste úspěšně odhlášen(a)`,
+            position: "is-top",
+            type: "is-info",
+          });
+        })
+        .catch(() => {
+          this.$store.dispatch("logout");
+          if (this.$route.path !== "/") this.$router.push("/");
+          this.$buefy.toast.open({
+            duration: 5000,
+            message: `Naskytla se chyba`,
+            position: "is-top",
+            type: "is-warning",
+          });
+        });
     },
     linkToRoot() {
       if (this.$route.path === "/") {
