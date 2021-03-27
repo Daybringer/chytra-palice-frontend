@@ -90,9 +90,6 @@ const getters = {
       null;
     }
   },
-  getIDOfLastComment: (state) => (workID) => {
-    return state.comments[workID][state.comments[workID].length - 1].ID;
-  },
 };
 
 const actions = {

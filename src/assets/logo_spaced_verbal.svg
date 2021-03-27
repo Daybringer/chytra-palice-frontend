@@ -1,37 +1,17 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
 <svg
    xmlns:dc="http://purl.org/dc/elements/1.1/"
    xmlns:cc="http://creativecommons.org/ns#"
    xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
    xmlns:svg="http://www.w3.org/2000/svg"
    xmlns="http://www.w3.org/2000/svg"
-   xmlns:sodipodi="http://sodipodi.sourceforge.net/DTD/sodipodi-0.dtd"
-   xmlns:inkscape="http://www.inkscape.org/namespaces/inkscape"
-   viewBox="0 0 77.18483 25.191242"
+   viewBox="0 0 83.18483 25.191242"
    version="1.1"
    id="svg8"
-   inkscape:version="1.0.1 (3bc2e813f5, 2020-09-07, custom)"
-   sodipodi:docname="palice_logo_verbal.svg">
+   width="83.18483"
+   height="25.191242">
   <defs
      id="defs2" />
-  <sodipodi:namedview
-     id="base"
-     pagecolor="#ffffff"
-     bordercolor="#666666"
-     borderopacity="1.0"
-     inkscape:pageopacity="0.0"
-     inkscape:pageshadow="2"
-     inkscape:zoom="0.98994949"
-     inkscape:cx="169.28654"
-     inkscape:cy="78.548304"
-     inkscape:document-units="mm"
-     inkscape:current-layer="layer1"
-     inkscape:document-rotation="0"
-     showgrid="false"
-     inkscape:window-width="1920"
-     inkscape:window-height="1050"
-     inkscape:window-x="0"
-     inkscape:window-y="30"
-     inkscape:window-maximized="0" />
   <metadata
      id="metadata5">
     <rdf:RDF>
@@ -45,8 +25,6 @@
     </rdf:RDF>
   </metadata>
   <g
-     inkscape:label="Layer 1"
-     inkscape:groupmode="layer"
      id="layer1"
      transform="translate(-14.610941,-12.568079)">
     <g
@@ -77,76 +55,58 @@
          d="m 325.207,142.895 -21.562,21.562 c 8.551,-8.767 8.478,-22.819 -0.196,-31.503 L 198.813,28.328 c -8.757,-8.757 -22.953,-8.757 -31.699,0 L 188.872,6.56 c 8.757,-8.747 22.952,-8.747 31.709,0 l 104.626,104.636 c 8.756,8.756 8.756,22.952 0,31.699 z"
          id="path87" />
       <g
-         id="g89">
-</g>
+         id="g89" />
       <g
-         id="g91">
-</g>
+         id="g91" />
       <g
-         id="g93">
-</g>
+         id="g93" />
       <g
-         id="g95">
-</g>
+         id="g95" />
       <g
-         id="g97">
-</g>
+         id="g97" />
       <g
-         id="g99">
-</g>
+         id="g99" />
       <g
-         id="g101">
-</g>
+         id="g101" />
       <g
-         id="g103">
-</g>
+         id="g103" />
       <g
-         id="g105">
-</g>
+         id="g105" />
       <g
-         id="g107">
-</g>
+         id="g107" />
       <g
-         id="g109">
-</g>
+         id="g109" />
       <g
-         id="g111">
-</g>
+         id="g111" />
       <g
-         id="g113">
-</g>
+         id="g113" />
       <g
-         id="g115">
-</g>
+         id="g115" />
       <g
-         id="g117">
-</g>
+         id="g117" />
     </g>
     <text
        xml:space="preserve"
        style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:7.57266px;line-height:1.25;font-family:Roboto;-inkscape-font-specification:Roboto;fill:#333d42;fill-opacity:1;stroke-width:0.189317"
-       x="40.748562"
+       x="46.748562"
        y="27.881363"
        id="text394"><tspan
-         sodipodi:role="line"
          id="tspan392"
-         x="40.748562"
+         x="46.748562"
          y="27.881363"
          style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-family:'DejaVu Math TeX Gyre';-inkscape-font-specification:'DejaVu Math TeX Gyre';fill:#333d42;fill-opacity:1;stroke-width:0.189317">Chytrá palice</tspan><tspan
-         sodipodi:role="line"
-         x="40.748562"
+         x="46.748562"
          y="37.366276"
          style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-family:Roboto;-inkscape-font-specification:Roboto;fill:#333d42;fill-opacity:1;stroke-width:0.189317"
          id="tspan396" /></text>
     <text
        xml:space="preserve"
        style="font-size:4.80173px;line-height:1.25;font-family:'URW Gothic';-inkscape-font-specification:'URW Gothic';fill:#4a575e;fill-opacity:1;stroke-width:0.120043"
-       x="41.778458"
+       x="47.778458"
        y="34.232437"
        id="text400"><tspan
-         sodipodi:role="line"
          id="tspan398"
-         x="41.778458"
+         x="47.778458"
          y="34.232437"
          style="fill:#4a575e;fill-opacity:1;stroke-width:0.120043">literární soutěž GJK</tspan></text>
   </g>

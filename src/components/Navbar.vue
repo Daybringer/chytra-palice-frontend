@@ -3,7 +3,7 @@
     <template #brand>
       <b-navbar-item class="logoSVGcontainer" @click="linkToRoot">
         <img
-          src="../assets/palice_logo_verbal.svg"
+          src="../assets/logo_spaced_verbal.svg"
           class="logoSVG"
           alt="Chytrá palice - literární soutěž GJK"
         />

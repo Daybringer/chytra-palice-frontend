@@ -123,9 +123,43 @@
         <b-button v-show="admin" icon-left="close-thick" type="is-warning"
           >Upravit soutěž</b-button
         >
-        <b-button v-show="admin" icon-left="close-thick" type="is-danger"
+        <b-button
+          v-show="admin"
+          @click="isRemoveModalActive = true"
+          icon-left="close-thick"
+          type="is-danger"
           >Vymazat soutěž</b-button
         >
+        <b-modal
+          v-model="isRemoveModalActive"
+          has-modal-card
+          trap-focus
+          :destroy-on-hide="true"
+          aria-role="dialog"
+          aria-label="Confirm removing of contest"
+          aria-modal
+        >
+          <template #default="props">
+            <div @close="props.close" class="container">
+              <div class="card p-5 is-justify-content-center">
+                <h2 class="subtitle has-text-centered is-size-4">
+                  <b>Chcete doopravdy soutěž vymazat?</b>
+                </h2>
+                <div class="buttons is-justify-content-center">
+                  <b-button class="button is-danger" @click="removeContest">
+                    Potvrdit vymazání soutěže
+                  </b-button>
+                  <b-button
+                    class="button is-info"
+                    @click="isRemoveModalActive = false"
+                  >
+                    Uzavřít soutěž
+                  </b-button>
+                </div>
+              </div>
+            </div>
+          </template>
+        </b-modal>
       </div>
       <div v-show="closed" class="block has-text-centered">
         <h2 class="title">Oceněné práce</h2>
@@ -207,6 +241,7 @@ export default {
   data() {
     return {
       contest: {},
+      isRemoveModalActive: false,
       isModalActive: false,
       error: false,
       radioButton: "",
@@ -227,6 +262,13 @@ export default {
         this.winners = this.contest.winners;
         this.setWinnerWorks();
       }
+    },
+    removeContest() {
+      this.$store.dispatch("removeContest", {
+        contestID: this.id,
+      });
+      this.isRemoveModalActive = false;
+      this;
     },
     setWinnerWorks() {
       if (!this.closed) return [];
@@ -313,6 +355,10 @@ export default {
   beforeMount() {
     this.loadContent();
     this.setTitle();
+    console.log(`contest`, this.contest);
+    console.log("works", this.works);
+    console.log("approved", this.approvedWorks);
+    console.log(`winners: ${this.winners}`);
   },
 };
 </script>
