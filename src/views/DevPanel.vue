@@ -19,6 +19,11 @@
         Change to student (Jaroslava Volhejnová)
       </button>
     </div>
+    <div class="buttons is-justify-content-center">
+      <button class="button is-warning" @click="testAxiosSecured">
+        Text JWT Gate
+      </button>
+    </div>
   </div>
 </template>
 
@@ -32,6 +37,9 @@ export default {
         name: "Blanka Činátlová",
         email: "cinatlova@gjk.cz",
       });
+    },
+    testAxiosSecured() {
+      this.$store.dispatch("testSecure");
     },
     changeUserMichal() {
       this.$store.dispatch("changeUser", {

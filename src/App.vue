@@ -14,6 +14,11 @@ import Footer from "./components/Footer.vue";
 export default {
   name: "App",
   components: { Navbar, Footer },
+  mounted() {},
+  beforeMount() {
+    if (this.$store.getters.isLoggedIn)
+      this.$store.dispatch("setBearer", this.$store.getters.getToken);
+  },
 };
 </script>
 <style lang="scss">

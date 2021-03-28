@@ -69,12 +69,12 @@
 export default {
   name: "Navbar",
   methods: {
-    login() {
-      this.$gAuth
-        .getAuthCode()
-        .then((authCode) => {
-          console.log(authCode);
-          this.$store.dispatch("login", authCode);
+    async login() {
+      await this.$gAuth
+        .signIn()
+        .then((googleUser) => {
+          const id_token = googleUser.getAuthResponse().id_token;
+          this.$store.dispatch("login", id_token);
           this.$buefy.toast.open({
             duration: 5000,
             message: `Byl(a) jste úspěšně přihlášen(a)`,

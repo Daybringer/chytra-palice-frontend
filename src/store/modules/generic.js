@@ -1,12 +1,14 @@
 import Repository from "@/repositories/Repository";
 import { RepositoryFactory } from "@/repositories/RepositoryFactory";
 const AuthRepository = RepositoryFactory.get("auth");
+const RootRepository = RepositoryFactory.get("root");
 
 const state = () => ({
-  loggedIn: true,
-  admin: true,
-  name: "Blanka Činátlová",
-  email: "cinatlova@gjk.cz",
+  admin: false,
+  name: "",
+  email: "",
+  token: localStorage.getItem("access-token") || "",
+
   posts: JSON.parse(window.localStorage.getItem("posts")) || [],
   contests: JSON.parse(window.localStorage.getItem("contests")) || [],
   works: JSON.parse(window.localStorage.getItem("works")) || [],
@@ -15,9 +17,8 @@ const state = () => ({
 });
 
 const getters = {
-  // Generic
   isLoggedIn: (state) => {
-    return state.loggedIn;
+    return !!state.token;
   },
   isAdmin: (state) => {
     return state.admin;
@@ -28,6 +29,10 @@ const getters = {
   getName: (state) => {
     return state.name;
   },
+  getToken: (state) => {
+    return state.token;
+  },
+
   // getter for the next numeric ID (in posts,contests,works)
   getNextID: (state) => (category) => {
     if (state[category].length === 0) {
@@ -99,46 +104,45 @@ const getters = {
 const actions = {
   // General
 
-  logout({ commit }) {
-    commit("logout");
-  },
-
   // Authentication
-  login({ commit }, authCode) {
+  testSecure() {
+    RootRepository.testing()
+      .then((res) => console.log(res))
+      .catch((err) => console.log(err));
+  },
+  login({ commit, dispatch }, id_token) {
     return new Promise((resolve, reject) => {
-      AuthRepository.googleLogin(authCode)
+      AuthRepository.googleLogin(id_token)
         .then((res) => {
-          console.log(res);
-          commit("login");
+          const accessToken = res.data;
+          console.log(res.data);
+          dispatch("setBearer", accessToken);
+
+          commit("setToken", accessToken);
+          dispatch("saveToken", accessToken);
           resolve();
         })
         .catch(() => {
-          commit("logout");
+          dispatch("logout");
           reject();
         });
     });
   },
-  setBearer(token) {
+  setBearer(context, token) {
     Object.assign(Repository.defaults, {
       headers: { Authorization: "Bearer " + token },
     });
   },
-  // consumeAuthResponse(response) {
-  //   const data = response.data;
-  //   const token = data.payload.token;
-  //   this.saveUserProfile(data.user);
-  //   this.saveToken(token);
-  // },
-  // saveToken(token) {
-  //   localStorage.setItem("access-token", token);
-  //   this.setBearer(token);
-  //   this.token = token;
-  // },
-  // setBearer(token) {
-  //   Object.assign(Repository.defaults, {
-  //     headers: { Authorization: "Bearer " + token },
-  //   });
-  // },
+  saveToken({ state }) {
+    window.localStorage.setItem("access-token", state.token);
+  },
+
+  logout({ commit, dispatch }) {
+    dispatch("setBearer", "");
+    commit("logout");
+    window.localStorage.setItem("access-token", "");
+  },
+
   // Dev methods
   changeUser({ commit }, payload) {
     commit("setUser", payload);
@@ -347,13 +351,14 @@ const actions = {
 
 const mutations = {
   // General
-  login(state) {
-    state.loggedIn = true;
+  setToken(state, token) {
+    state.token = token;
   },
   logout(state) {
-    state.loggedIn = false;
+    state.token = "";
     state.name = "";
     state.email = "";
+    state.admin = false;
   },
   // Dev mutation
   setUser(state, { name, email, admin }) {
