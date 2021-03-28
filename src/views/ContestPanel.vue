@@ -1,18 +1,25 @@
 <template>
   <div class="container mb-5">
-    <div class="box">
+    <div v-if="contest" class="box">
       <div class="block">
         <h1 class="title has-text-primary">{{ contest.name }}</h1>
 
-        <p><b>Datum vytvoření: </b>{{ formatDate(contest.dateCreated) }}</p>
-        <p><b>Datum uzávěrky: </b>{{ formatDate(contest.dateEnding) }}</p>
+        <p>
+          <b>Datum vytvoření: </b
+          >{{ new Date(+contest.dateAdded).toLocaleDateString("cs") }}
+        </p>
+        <p>
+          <b>Datum uzávěrky: </b
+          >{{ new Date(+contest.dateEnding).toLocaleDateString("cs") }}
+        </p>
         <p>
           <b>
             Stav:
           </b>
-          <span :class="closed ? 'has-text-danger' : 'has-text-primary'">{{
-            closed ? "Ukončena" : "V průběhu"
-          }}</span>
+          <span
+            :class="!contest.running ? 'has-text-danger' : 'has-text-primary'"
+            >{{ contest.running ? "V průběhu" : "Ukončena" }}</span
+          >
         </p>
         <p>
           <b>Kategorie: </b
@@ -28,7 +35,7 @@
       </div>
       <div class="buttons">
         <b-button
-          v-show="!closed"
+          v-show="contest.running"
           icon-left="plus-thick"
           tag="router-link"
           :to="'/nova-prace/' + id"
@@ -41,7 +48,9 @@
           @click="isModalActive = true"
           icon-left="trophy"
           type="is-info"
-          >{{ closed ? "Upravit pořadí" : "Uzavřít soutěž" }}</b-button
+          >{{
+            !contest.running ? "Upravit pořadí" : "Uzavřít soutěž"
+          }}</b-button
         >
 
         <b-modal
@@ -161,7 +170,7 @@
           </template>
         </b-modal>
       </div>
-      <div v-show="closed" class="block has-text-centered">
+      <div v-show="!contest.running" class="block has-text-centered">
         <h2 class="title">Oceněné práce</h2>
         <div class="block">
           <div
@@ -236,11 +245,14 @@
 </template>
 
 <script>
+import { RepositoryFactory } from "@/repositories/RepositoryFactory";
+const ContestsRepository = RepositoryFactory.get("contests");
 export default {
   name: "ContestPanel",
   data() {
     return {
       contest: {},
+      works: [],
       isRemoveModalActive: false,
       isModalActive: false,
       error: false,
@@ -251,10 +263,21 @@ export default {
     };
   },
   methods: {
+    async fetchContest() {
+      ContestsRepository.getContestByID(this.id)
+        .then((response) => {
+          const contest = response.data;
+          this.contest = contest;
+          this.closed = contest.running;
+          console.log(contest);
+        })
+        .catch(() => {
+          this.$router.push({ path: "/", query: { err: "conNotFound" } });
+        });
+    },
     loadContent() {
       this.contest = this.$store.getters.getContestByID(this.id);
       if (!this.contest) {
-        this.$router.push({ path: "/", query: { err: "conNotFound" } });
         this.error = true;
       } else {
         this.closed = this.contest.isClosed;
@@ -341,24 +364,12 @@ export default {
     admin() {
       return this.$store.getters.isAdmin;
     },
-    works() {
-      const works = [];
-      this.contest.nominated.forEach((id) => {
-        works.push(this.$store.getters.getWorkByID(id));
-      });
-      return works;
-    },
     approvedWorks() {
       return this.works.filter((work) => work.approvedState === "approved");
     },
   },
-  beforeMount() {
-    this.loadContent();
-    this.setTitle();
-    console.log(`contest`, this.contest);
-    console.log("works", this.works);
-    console.log("approved", this.approvedWorks);
-    console.log(`winners: ${this.winners}`);
+  created() {
+    this.fetchContest();
   },
 };
 </script>

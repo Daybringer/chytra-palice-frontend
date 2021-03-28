@@ -169,14 +169,17 @@ router.beforeEach((to, from, next) => {
 
 router.beforeEach((to, from, next) => {
   if (to.matched.some((record) => record.meta.is_admin)) {
-    if (!store.getters.isAdmin) {
-      next({
-        path: "/",
-        query: { err: "admin" },
-      });
-    } else {
-      next();
-    }
+    // FIXME hideous way to fix router async problems
+    setTimeout(() => {
+      if (!store.getters.isAdmin) {
+        next({
+          path: "/",
+          query: { err: "admin" },
+        });
+      } else {
+        next();
+      }
+    }, 100);
   } else {
     next();
   }

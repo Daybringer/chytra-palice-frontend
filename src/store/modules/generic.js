@@ -3,6 +3,7 @@ import { RepositoryFactory } from "@/repositories/RepositoryFactory";
 import jwt_decode from "jwt-decode";
 const AuthRepository = RepositoryFactory.get("auth");
 const RootRepository = RepositoryFactory.get("root");
+const ContestsRepository = RepositoryFactory.get("contests");
 
 const state = () => ({
   admin: false,
@@ -211,36 +212,15 @@ const actions = {
     window.localStorage.setItem("contests", JSON.stringify(state.contests));
   },
 
-  newContest({ dispatch, commit, getters }, contest) {
-    return new Promise((resolve) => {
-      const { name, endDate, category, description } = contest;
-      const date = new Date();
-
-      // TODO may move this to separate function
-      let id;
-      const contests = getters.getContests;
-      if (contests.length === 0) {
-        id = 0;
-      } else {
-        id = contests[contests.length - 1].id + 1;
-      }
-
-      const newContest = {
-        id,
-        dateCreated: date,
-        dateEnding: endDate,
-        name: name.trim(),
-        category,
-        description: description.trim(),
-        //
-        isClosed: false,
-        winners: [[], [], []],
-        nominated: [],
-      };
-
-      commit("addContest", newContest);
-      dispatch("saveContests");
-      resolve(id);
+  createContest(context, createContestDto) {
+    return new Promise((resolve, reject) => {
+      ContestsRepository.createContest(createContestDto)
+        .then((contest) => {
+          resolve(contest.id);
+        })
+        .catch((err) => {
+          reject(err);
+        });
     });
   },
 

@@ -16,8 +16,7 @@ export default {
   components: { Navbar, Footer },
   mounted() {},
   beforeMount() {
-    if (this.$store.getters.isLoggedIn)
-      this.$store.dispatch("setBearer", this.$store.getters.getToken);
+    if (this.$store.getters.isLoggedIn) this.$store.dispatch("consumeToken");
   },
 };
 </script>

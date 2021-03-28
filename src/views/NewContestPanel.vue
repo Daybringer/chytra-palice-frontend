@@ -145,12 +145,13 @@ export default {
           this.errors.description
         )
       ) {
+        const endDateNum = new Date(this.contest.endDate).getTime();
         this.$store
-          .dispatch("newContest", {
+          .dispatch("createContest", {
             name: this.contest.name,
-            endDate: this.contest.endDate,
+            dateEnding: endDateNum,
             category: this.contest.category,
-            description: this.contest.description,
+            description: this.contest.description.trim(),
           })
           .then((id) => {
             this.$buefy.toast.open({
@@ -161,6 +162,14 @@ export default {
             });
 
             this.$router.push(`/souteze/${id}`);
+          })
+          .catch((err) => {
+            this.$buefy.toast.open({
+              duration: 5000,
+              message: `${err}`,
+              position: "is-top",
+              type: "is-warning",
+            });
           });
       }
     },
