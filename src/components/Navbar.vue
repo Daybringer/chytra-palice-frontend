@@ -93,28 +93,14 @@ export default {
         });
     },
     logout() {
-      this.$gAuth
-        .signOut()
-        .then(() => {
-          this.$store.dispatch("logout");
-          if (this.$route.path !== "/") this.$router.push("/");
-          this.$buefy.toast.open({
-            duration: 5000,
-            message: `Byl(a) jste úspěšně odhlášen(a)`,
-            position: "is-top",
-            type: "is-info",
-          });
-        })
-        .catch(() => {
-          this.$store.dispatch("logout");
-          if (this.$route.path !== "/") this.$router.push("/");
-          this.$buefy.toast.open({
-            duration: 5000,
-            message: `Naskytla se chyba`,
-            position: "is-top",
-            type: "is-warning",
-          });
-        });
+      this.$store.dispatch("logout");
+      if (this.$route.path !== "/") this.$router.push("/");
+      this.$buefy.toast.open({
+        duration: 5000,
+        message: `Byl(a) jste úspěšně odhlášen(a)`,
+        position: "is-top",
+        type: "is-info",
+      });
     },
     linkToRoot() {
       if (this.$route.path === "/") {

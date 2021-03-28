@@ -1,5 +1,6 @@
 import Repository from "@/repositories/Repository";
 import { RepositoryFactory } from "@/repositories/RepositoryFactory";
+import jwt_decode from "jwt-decode";
 const AuthRepository = RepositoryFactory.get("auth");
 const RootRepository = RepositoryFactory.get("root");
 
@@ -115,11 +116,10 @@ const actions = {
       AuthRepository.googleLogin(id_token)
         .then((res) => {
           const accessToken = res.data;
-          console.log(res.data);
-          dispatch("setBearer", accessToken);
 
           commit("setToken", accessToken);
           dispatch("saveToken", accessToken);
+          dispatch("consumeToken");
           resolve();
         })
         .catch(() => {
@@ -127,6 +127,15 @@ const actions = {
           reject();
         });
     });
+  },
+  consumeToken({ dispatch, getters }) {
+    const token = getters.getToken;
+    dispatch("saveProfile", token);
+    dispatch("setBearer", token);
+  },
+  saveProfile({ commit }, token) {
+    const { email, name, isAdmin } = jwt_decode(token);
+    commit("saveProfile", { isAdmin, name, email });
   },
   setBearer(context, token) {
     Object.assign(Repository.defaults, {
@@ -359,6 +368,11 @@ const mutations = {
     state.name = "";
     state.email = "";
     state.admin = false;
+  },
+  saveProfile(state, { isAdmin, name, email }) {
+    state.admin = isAdmin;
+    state.name = name;
+    state.email = email;
   },
   // Dev mutation
   setUser(state, { name, email, admin }) {
