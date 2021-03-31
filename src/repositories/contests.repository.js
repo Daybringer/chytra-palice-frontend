@@ -10,7 +10,6 @@ export default {
     return Repository.post(`${resource}`, createContestDto);
   },
   getContestByID(id) {
-    console.log(id, " repository");
     return Repository.get(`${resource}/${id}`);
   },
 };

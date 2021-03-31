@@ -74,9 +74,37 @@
             </option>
           </b-select>
         </b-field>
+        <!-- Subject -->
+        <b-field
+          label="Předmět"
+          :label-position="'on-border'"
+          :message="errors.class"
+          :type="errors.class ? 'is-danger' : checked.class ? 'is-success' : ''"
+        >
+          <b-select
+            v-model="data.class"
+            placeholder="Vyberte třídu"
+            @input="validate('class')"
+            @blur="validate('class')"
+          >
+            <option v-for="Class in classList" :key="Class" :value="Class">
+              {{ Class }}
+            </option>
+          </b-select>
+        </b-field>
         <!-- Maturita project -->
         <b-field>
-          <b-checkbox v-model="data.isMaturita">
+          <b-checkbox
+            :disabled="
+              !(
+                data.class == 'R8' ||
+                data.class == '4A' ||
+                data.class == '4B' ||
+                data.class == '4C'
+              )
+            "
+            v-model="data.isMaturita"
+          >
             Maturitní práce
           </b-checkbox>
         </b-field>
@@ -136,6 +164,7 @@ const newContestSchema = object().shape({
     .email("Invalidní email")
     .required("Vyplňte email autora"),
   subject: string().required("Vyberte předmět"),
+  class: string().required("Vyberte třídu"),
 });
 
 // Components
@@ -146,27 +175,33 @@ export default {
       this.validate("name");
       this.validate("email");
       this.validate("subject");
+      this.validate("class");
       this.validateFile();
       if (
         !(
           this.errors.name ||
           this.errors.email ||
           this.errors.subject ||
-          this.errors.file
+          this.errors.file ||
+          this.errors.class
         )
       ) {
+        const fileType = "odt";
         this.$store
-          .dispatch("newWork", {
-            name: this.data.name,
-            file: this.data.file,
-            // TODO  Check google domain for email and fill authorName
-            authorName: this.isAdmin ? this.data.authorEmail : this.author,
-            authorEmail: this.data.email,
-            contestID: this.contestID,
-            keywords: this.tags,
-            maturita: this.data.isMaturita,
-            subject: this.data.subject,
-          })
+          .dispatch(
+            "createWork",
+            {
+              name: this.data.name.trim(),
+              fileType: fileType,
+              authorName: this.isAdmin ? this.authorName.trim() : this.author,
+              authorEmail: this.data.email.trim(),
+              contestID: Number(this.contestID),
+              keywords: this.formatKeywords(this.tags),
+              maturita: this.data.isMaturita,
+              subject: this.data.subject,
+            },
+            this.data.file
+          )
           .then((id) => {
             this.$buefy.toast.open({
               duration: 5000,
@@ -174,13 +209,14 @@ export default {
               position: "is-top",
               type: "is-primary",
             });
-            this.updateTags();
+
             this.$router.push(`/prace/${id}`);
           })
-          .catch(() => {
+          .catch((err) => {
+            console.log(err);
             this.$buefy.toast.open({
               duration: 5000,
-              message: `Soutěž je již uzavřena`,
+              message: `${err}`,
               position: "is-top",
               type: "is-primary",
             });
@@ -198,25 +234,21 @@ export default {
         ? "is-success"
         : "";
     },
-    updateTags() {
-      const newTags = [];
-      this.tags.forEach((preTag) => {
-        const tag =
-          preTag
+    formatKeywords(keywords) {
+      const newKeywords = [];
+      keywords.forEach((keyword) => {
+        const newKeyword =
+          keyword
             .trim()
             .charAt(0)
             .toUpperCase() +
-          preTag
+          keyword
             .trim()
             .slice(1)
             .toLowerCase();
-        if (!this.allTags.includes(tag)) {
-          newTags.push(tag);
-        }
+        newKeywords.push(newKeyword);
       });
-      if (newTags.length !== 0) {
-        this.$store.dispatch("addNewTags", newTags);
-      }
+      return newKeywords;
     },
     async validate(field) {
       newContestSchema
@@ -287,9 +319,6 @@ export default {
     contestID() {
       return this.$route.params.contestID;
     },
-    contestName() {
-      return this.$store.getters.getContestByID(this.contestID).name;
-    },
     allTags() {
       return this.$store.getters.getTags;
     },
@@ -302,14 +331,37 @@ export default {
   },
   data() {
     return {
-      errors: { name: "", email: "", file: "", subject: "" },
-      checked: { name: "", email: "", file: "", subject: "" },
+      classList: [
+        "R1",
+        "R2",
+        "R3",
+        "R4",
+        "R5",
+        "R6",
+        "R7",
+        "R8",
+        "1A",
+        "1B",
+        "1C",
+        "2A",
+        "2B",
+        "2C",
+        "3A",
+        "3B",
+        "3C",
+        "4A",
+        "4B",
+        "4C",
+      ],
+      errors: { name: "", email: "", file: "", subject: "", class: "" },
+      checked: { name: "", email: "", file: "", subject: "", class: "" },
       data: {
         name: "",
         email: "",
         file: null,
         isMaturita: false,
         subject: "",
+        class: "",
       },
       authorName: "",
       tags: [],

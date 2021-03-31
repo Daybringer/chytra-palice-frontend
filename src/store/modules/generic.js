@@ -4,6 +4,7 @@ import jwt_decode from "jwt-decode";
 const AuthRepository = RepositoryFactory.get("auth");
 const RootRepository = RepositoryFactory.get("root");
 const ContestsRepository = RepositoryFactory.get("contests");
+const WorksRepository = RepositoryFactory.get("worksRepository");
 
 const state = () => ({
   admin: false,
@@ -104,8 +105,6 @@ const getters = {
 };
 
 const actions = {
-  // General
-
   // Authentication
   testSecure() {
     RootRepository.testing()
@@ -151,6 +150,40 @@ const actions = {
     dispatch("setBearer", "");
     commit("logout");
     window.localStorage.setItem("access-token", "");
+  },
+
+  // Works
+
+  createWork(context, createWorkDto, file) {
+    return new Promise((resolve, reject) => {
+      // Creating the work entity without uploading the file
+      // Splitting the request due to the formData field limitations (only blob and string)
+      WorksRepository.createWork(createWorkDto)
+        .then((res) => {
+          const work = res.data;
+          console.log("work:", work);
+
+          const formData = new FormData();
+          formData.append("document", file);
+
+          // Uploading the actual file
+          WorksRepository.uploadDocument(formData, work.id)
+            .then((res) => {
+              console.log(res);
+              resolve(work);
+            })
+            .catch((err) => {
+              console.log(err);
+              reject(err);
+            });
+
+          resolve(res.data);
+        })
+        .catch((err) => {
+          console.log(err);
+          reject(err);
+        });
+    });
   },
 
   // Dev methods
@@ -231,61 +264,6 @@ const actions = {
   removeContest({ commit, dispatch }, { contestID }) {
     commit("removeContest", { contestID });
     dispatch("saveContests");
-  },
-  // Works
-  saveWorks({ state }) {
-    window.localStorage.setItem("works", JSON.stringify(state.works));
-  },
-  newWork({ dispatch, commit, getters }, work) {
-    return new Promise((resolve, reject) => {
-      const {
-        name,
-        authorEmail,
-        authorName,
-        contestID,
-        file,
-        keywords,
-        maturita,
-        subject,
-      } = work;
-
-      // Checking wether is contest still running
-      const contest = getters.getContestByID(contestID);
-      if (
-        contest.isClosed ||
-        Number(new Date(contest.endDate).toString()) < Number(Date.now())
-      )
-        reject();
-
-      const dateAdded = new Date();
-      const ID = getters.getNextID("works");
-
-      const newWork = {
-        ID,
-        dateAdded,
-        name: name.trim(),
-        authorName,
-        authorEmail,
-        contestID,
-        subject,
-        maturita,
-        keywords,
-        // file
-        fileName: file.name,
-        approvedState: "pending",
-        guarantorEmail: "",
-        guarantorMessage: "",
-      };
-
-      commit("addWork", newWork);
-      commit("addWorkToContest", {
-        contestID: newWork.contestID,
-        work: newWork,
-      });
-      dispatch("saveWorks");
-      dispatch("saveContests");
-      resolve(ID);
-    });
   },
   approveWork({ commit, dispatch }, { id }) {
     commit("approveWork", id);
