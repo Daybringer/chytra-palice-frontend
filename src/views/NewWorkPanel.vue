@@ -1,6 +1,6 @@
 <template>
   <div class="container my-6">
-    <div class="box p-6-desktop">
+    <div v-if="contest" class="box p-6-desktop">
       <h1 class="title">Nahrání soutěžní práce</h1>
       <!--  -->
       <div class="block">
@@ -18,9 +18,25 @@
             v-model.trim="data.name"
           ></b-input>
         </b-field>
-        <!-- Author email -->
+
+        <!-- Author name -->
         <b-field
           label="Autor práce"
+          :message="errors.authorName"
+          :type="validationState('authorName')"
+          :label-position="'on-border'"
+        >
+          <b-input
+            :placeholder="'Autor práce'"
+            @input="validate('authorName')"
+            @blur="validate('authorName')"
+            v-model.trim="data.authorName"
+            :disabled="!isAdmin"
+          ></b-input>
+        </b-field>
+        <!-- Author email -->
+        <b-field
+          label="Email autora"
           :message="errors.email"
           :type="validationState('email')"
           :label-position="'on-border'"
@@ -35,13 +51,17 @@
         </b-field>
         <!-- Contest -->
         <b-field label="Zařazeno do soutěže" :label-position="'on-border'">
-          <b-input placeholder="Soutěž" :value="contestName" disabled></b-input>
+          <b-input
+            placeholder="Soutěž"
+            :value="contest.name"
+            disabled
+          ></b-input>
         </b-field>
         <!-- Date  -->
         <b-field label="Datum přidání" :label-position="'on-border'">
           <b-input
             placeholder="Datum přidání"
-            :value="formatDate(new Date())"
+            :value="new Date().toLocaleDateString('cs')"
             disabled
           ></b-input>
         </b-field>
@@ -76,7 +96,7 @@
         </b-field>
         <!-- Subject -->
         <b-field
-          label="Předmět"
+          label="Třída"
           :label-position="'on-border'"
           :message="errors.class"
           :type="errors.class ? 'is-danger' : checked.class ? 'is-success' : ''"
@@ -84,7 +104,10 @@
           <b-select
             v-model="data.class"
             placeholder="Vyberte třídu"
-            @input="validate('class')"
+            @input="
+              validate('class');
+              !isMaturitaClass ? (data.isMaturita = false) : '';
+            "
             @blur="validate('class')"
           >
             <option v-for="Class in classList" :key="Class" :value="Class">
@@ -94,17 +117,7 @@
         </b-field>
         <!-- Maturita project -->
         <b-field>
-          <b-checkbox
-            :disabled="
-              !(
-                data.class == 'R8' ||
-                data.class == '4A' ||
-                data.class == '4B' ||
-                data.class == '4C'
-              )
-            "
-            v-model="data.isMaturita"
-          >
+          <b-checkbox :disabled="!isMaturitaClass" v-model="data.isMaturita">
             Maturitní práce
           </b-checkbox>
         </b-field>
@@ -131,7 +144,13 @@
         {{ data.file ? data.file.name : "" }}
       </div>
       <b-field>
-        <b-upload v-model="data.file" native drag-drop expanded>
+        <b-upload
+          accept=".pdf,.doc,.docx,.odt"
+          v-model="data.file"
+          native
+          drag-drop
+          expanded
+        >
           <section class="section">
             <div class="content has-text-centered">
               <p>
@@ -165,17 +184,32 @@ const newContestSchema = object().shape({
     .required("Vyplňte email autora"),
   subject: string().required("Vyberte předmět"),
   class: string().required("Vyberte třídu"),
+  authorName: string().required("Vyplňte jméno autora"),
 });
 
 // Components
 export default {
   name: "AddWorkPanel",
   methods: {
+    async fetchContest() {
+      this.$store
+        .dispatch("getContestByID", this.contestID)
+        .then((contest) => {
+          this.contest = contest;
+          if (!contest)
+            this.$router.push({ path: "/", query: { err: "conNotFound" } });
+        })
+        .catch((err) => {
+          console.log(err);
+          this.$router.push({ path: "/", query: { err: "conNotFound" } });
+        });
+    },
     saveWork() {
       this.validate("name");
       this.validate("email");
       this.validate("subject");
       this.validate("class");
+      this.validate("authorName");
       this.validateFile();
       if (
         !(
@@ -183,25 +217,27 @@ export default {
           this.errors.email ||
           this.errors.subject ||
           this.errors.file ||
-          this.errors.class
+          this.errors.class ||
+          this.errors.authorName
         )
       ) {
-        const fileType = "odt";
         this.$store
-          .dispatch(
-            "createWork",
-            {
+          .dispatch("createWork", {
+            createWorkDto: {
               name: this.data.name.trim(),
-              fileType: fileType,
-              authorName: this.isAdmin ? this.authorName.trim() : this.author,
+              authorName: this.isAdmin
+                ? this.data.authorName.trim()
+                : this.author,
               authorEmail: this.data.email.trim(),
-              contestID: Number(this.contestID),
+              contestID: this.contestID,
+              fileType: this.fileExtension,
+              class: this.data.class,
               keywords: this.formatKeywords(this.tags),
-              maturita: this.data.isMaturita,
+              isMaturitaProject: this.data.isMaturita,
               subject: this.data.subject,
             },
-            this.data.file
-          )
+            file: this.data.file,
+          })
           .then((id) => {
             this.$buefy.toast.open({
               duration: 5000,
@@ -222,17 +258,6 @@ export default {
             });
           });
       }
-    },
-    formatDate(date = new Date()) {
-      return this.$formateDate(date);
-    },
-    // FIXME only works on a properties that aren't an object => `propName` can't have a format like work.name, description.state.date, etc.
-    validationState(propName) {
-      return this.errors[propName]
-        ? "is-danger"
-        : this.checked[propName]
-        ? "is-success"
-        : "";
     },
     formatKeywords(keywords) {
       const newKeywords = [];
@@ -261,6 +286,14 @@ export default {
           this.errors[field] = err.message;
         });
     },
+    // FIXME only works on a properties that aren't an object => `propName` can't have a format like work.name, description.state.date, etc.
+    validationState(propName) {
+      return this.errors[propName]
+        ? "is-danger"
+        : this.checked[propName]
+        ? "is-success"
+        : "";
+    },
     validateFile() {
       this.checked.file = true;
       if (!this.data.file) {
@@ -272,17 +305,20 @@ export default {
           type: "is-danger",
         });
       } else {
+        const temp = this.data.file.name.split(".");
+        const fileExtension = temp[temp.length - 1];
+        this.fileExtension = fileExtension;
         if (
-          this.data.file.type == "application/pdf" ||
-          this.data.file.type == "application/vnd.oasis.opendocument.text" ||
-          this.data.file.type ==
-            "application / vnd.openxmlformats-officedocument.wordprocessingml.document"
+          fileExtension == "pdf" ||
+          fileExtension == "doc" ||
+          fileExtension == "docx" ||
+          fileExtension == "odt"
         ) {
           this.errors.file = "";
         } else {
           this.$buefy.toast.open({
             duration: 5000,
-            message: `Nevhodný formát. Podporovanými formáty jsou PDF, DOCX a ODT`,
+            message: `Nevhodný formát. Podporovanými formáty jsou PDF, DOCX, DOC a ODT`,
             position: "is-bottom",
             type: "is-danger",
           });
@@ -307,6 +343,9 @@ export default {
     },
   },
   computed: {
+    contestID() {
+      return Number(this.$route.params.contestID);
+    },
     author() {
       return this.$store.getters.getName;
     },
@@ -316,18 +355,24 @@ export default {
     authorEmail() {
       return this.$store.getters.getEmail;
     },
-    contestID() {
-      return this.$route.params.contestID;
-    },
-    allTags() {
-      return this.$store.getters.getTags;
+    isMaturitaClass() {
+      return (
+        this.data.class === "R8" ||
+        this.data.class === "4A" ||
+        this.data.class === "4B" ||
+        this.data.class === "4C"
+      );
     },
   },
-  mounted() {
+  created() {
     if (!this.isAdmin) {
       this.data.email = this.authorEmail;
+      this.data.authorName = this.author;
     }
-    this.filteredTags = this.allTags;
+    // fetching contest data
+    this.fetchContest();
+    // TODO
+    // this.filteredTags = this.allTags;
   },
   data() {
     return {
@@ -353,10 +398,25 @@ export default {
         "4B",
         "4C",
       ],
-      errors: { name: "", email: "", file: "", subject: "", class: "" },
-      checked: { name: "", email: "", file: "", subject: "", class: "" },
+      errors: {
+        name: "",
+        email: "",
+        file: "",
+        subject: "",
+        class: "",
+        authorName: "",
+      },
+      checked: {
+        name: "",
+        email: "",
+        file: "",
+        subject: "",
+        class: "",
+        authorName: "",
+      },
       data: {
         name: "",
+        authorName: "",
         email: "",
         file: null,
         isMaturita: false,
@@ -364,9 +424,11 @@ export default {
         class: "",
       },
       authorName: "",
+      // TODO Load the tags from backend
       tags: [],
-      // Load the tags from backend
       filteredTags: [],
+      contest: null,
+      fileExtension: "",
     };
   },
 };

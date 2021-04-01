@@ -245,8 +245,6 @@
 </template>
 
 <script>
-import { RepositoryFactory } from "@/repositories/RepositoryFactory";
-const ContestsRepository = RepositoryFactory.get("contests");
 export default {
   name: "ContestPanel",
   data() {
@@ -264,14 +262,13 @@ export default {
   },
   methods: {
     async fetchContest() {
-      ContestsRepository.getContestByID(this.id)
-        .then((response) => {
-          const contest = response.data;
+      this.$store
+        .dispatch("getContestByID", this.id)
+        .then((contest) => {
           this.contest = contest;
-          this.closed = contest.running;
-          console.log(contest);
         })
-        .catch(() => {
+        .catch((err) => {
+          console.log(err);
           this.$router.push({ path: "/", query: { err: "conNotFound" } });
         });
     },

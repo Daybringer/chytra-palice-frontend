@@ -4,19 +4,19 @@ import jwt_decode from "jwt-decode";
 const AuthRepository = RepositoryFactory.get("auth");
 const RootRepository = RepositoryFactory.get("root");
 const ContestsRepository = RepositoryFactory.get("contests");
-const WorksRepository = RepositoryFactory.get("worksRepository");
+const WorksRepository = RepositoryFactory.get("works");
 
 const state = () => ({
   admin: false,
   name: "",
   email: "",
-  token: localStorage.getItem("access-token") || "",
+  token: window.localStorage.getItem("access-token") || "",
 
-  posts: JSON.parse(window.localStorage.getItem("posts")) || [],
-  contests: JSON.parse(window.localStorage.getItem("contests")) || [],
-  works: JSON.parse(window.localStorage.getItem("works")) || [],
-  tags: JSON.parse(window.localStorage.getItem("tags")) || [],
-  comments: JSON.parse(window.localStorage.getItem("comments")) || {},
+  posts: [],
+  contests: [],
+  works: [],
+  tags: [],
+  comments: {},
 });
 
 const getters = {
@@ -106,11 +106,6 @@ const getters = {
 
 const actions = {
   // Authentication
-  testSecure() {
-    RootRepository.testing()
-      .then((res) => console.log(res))
-      .catch((err) => console.log(err));
-  },
   login({ commit, dispatch }, id_token) {
     return new Promise((resolve, reject) => {
       AuthRepository.googleLogin(id_token)
@@ -154,33 +149,41 @@ const actions = {
 
   // Works
 
-  createWork(context, createWorkDto, file) {
+  createWork(context, { createWorkDto, file }) {
     return new Promise((resolve, reject) => {
       // Creating the work entity without uploading the file
       // Splitting the request due to the formData field limitations (only blob and string)
       WorksRepository.createWork(createWorkDto)
         .then((res) => {
           const work = res.data;
-          console.log("work:", work);
-
           const formData = new FormData();
-          formData.append("document", file);
-
+          formData.set("file", file);
           // Uploading the actual file
           WorksRepository.uploadDocument(formData, work.id)
-            .then((res) => {
-              console.log(res);
+            .then(() => {
               resolve(work);
             })
             .catch((err) => {
               console.log(err);
               reject(err);
             });
-
-          resolve(res.data);
         })
         .catch((err) => {
           console.log(err);
+          reject(err);
+        });
+    });
+  },
+
+  // Contests
+  getContestByID(context, id) {
+    return new Promise((resolve, reject) => {
+      ContestsRepository.getContestByID(id)
+        .then((response) => {
+          const contest = response.data;
+          resolve(contest);
+        })
+        .catch((err) => {
           reject(err);
         });
     });
@@ -191,7 +194,11 @@ const actions = {
     commit("setUser", payload);
     commit("logIn");
   },
-
+  testSecure() {
+    RootRepository.testing()
+      .then((res) => console.log(res))
+      .catch((err) => console.log(err));
+  },
   // Posts
   savePosts({ state }) {
     window.localStorage.setItem("posts", JSON.stringify(state.posts));

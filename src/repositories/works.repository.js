@@ -6,10 +6,10 @@ export default {
   createWork(createWorkDto) {
     return Repository.post(`${resource}`, createWorkDto);
   },
-  uploadDocument(document, id) {
-    return Repository.post(`${resource}/upload/${id}`, document, {
+  uploadDocument(file, id) {
+    return Repository.post(`${resource}/upload/${id}`, file, {
       headers: {
-        "content-Type": "multipart/form-data",
+        "content-type": "multipart/form-data",
       },
     });
   },
