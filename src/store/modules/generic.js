@@ -190,51 +190,48 @@ const actions = {
         });
     });
   },
+  rejectWork(context, { id, guarantorMessage }) {
+    return new Promise((resolve, reject) => {
+      WorksRepository.rejectWork({ id, guarantorMessage })
+        .then((res) => resolve(res.data))
+        .catch((err) => reject(err));
+    });
+  },
+  approveWork(context, id) {
+    return new Promise((resolve, reject) => {
+      WorksRepository.approveWork(id)
+        .then((res) => resolve(res.data))
+        .catch((err) => reject(err));
+    });
+  },
   // Comments
   getAllCommentsByWorkID(context, workID) {
     return new Promise((resolve, reject) => {
       CommentsRepository.getAllCommentsByWorkID(workID)
-        .then((res) => {
-          resolve(res.data);
-        })
-        .catch((err) => {
-          reject(err);
-        });
+        .then((res) => resolve(res.data))
+        .catch((err) => reject(err));
     });
   },
   createComment(context, createCommentDto) {
     return new Promise((resolve, reject) => {
       CommentsRepository.createComment(createCommentDto)
-        .then((res) => {
-          resolve(res.data);
-        })
-        .catch((err) => {
-          reject(err);
-        });
+        .then((res) => resolve(res.data))
+        .catch((err) => reject(err));
     });
   },
   deleteComment(context, id) {
     return new Promise((resolve, reject) => {
       CommentsRepository.deleteComment(id)
-        .then((res) => {
-          resolve(res.data);
-        })
-        .catch((err) => {
-          reject(err);
-        });
+        .then((res) => resolve(res.data))
+        .catch((err) => reject(err));
     });
   },
   // Contests
   getContestByID(context, id) {
     return new Promise((resolve, reject) => {
       ContestsRepository.getContestByID(id)
-        .then((response) => {
-          const contest = response.data;
-          resolve(contest);
-        })
-        .catch((err) => {
-          reject(err);
-        });
+        .then((res) => resolve(res.data))
+        .catch((err) => reject(err));
     });
   },
 
@@ -323,14 +320,7 @@ const actions = {
     commit("removeContest", { contestID });
     dispatch("saveContests");
   },
-  approveWork({ commit, dispatch }, { id }) {
-    commit("approveWork", id);
-    dispatch("saveWorks");
-  },
-  rejectWork({ commit, dispatch }, { id, quarantorMessage }) {
-    commit("rejectWork", { id, quarantorMessage });
-    dispatch("saveWorks");
-  },
+
   addNewTags({ commit, dispatch }, tags) {
     commit("addNewTags", tags);
     dispatch("saveTags");

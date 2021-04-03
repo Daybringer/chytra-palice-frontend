@@ -206,35 +206,24 @@ export default {
         .replace(/[\u0300-\u036f]/g, "");
       return normalizedString.includes(normalizedSubstring);
     },
+    async fetchWorks() {
+      this.$store
+        .dispatch("getAllWorks", {
+          approvedState: "approved",
+        })
+        .then((works) => {
+          this.works = works;
+          this.filteredWorks = works;
+        })
+        .catch((err) => console.log(err));
+    },
   },
-  // computed: {
-  //   works() {
-  //     const works = this.$store.getters.getWorks;
-  //     works.map((work) => {
-  //       const contest = this.$store.getters.getContestByID(work.contestID);
-  //       work.contest = contest.name;
-  //       work.category =
-  //         contest.category === "palice"
-  //           ? "Palice"
-  //           : contest.category === "palicka"
-  //           ? "Palička"
-  //           : "-";
-  //     });
-  //     return works.filter((work) => {
-  //       if (work) {
-  //         return work.approvedState === "approved";
-  //       } else {
-  //         return false;
-  //       }
-  //     });
-  //   },
-  // },
-  beforeMount() {
-    this.filteredWorks = this.works;
+  created() {
+    this.fetchWorks();
   },
   data() {
     return {
-      works: [],
+      works: null,
       filteredWorks: [],
       search: {
         name: "",

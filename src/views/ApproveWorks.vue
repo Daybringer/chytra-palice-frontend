@@ -1,6 +1,6 @@
 <template>
   <div class="container my-6">
-    <div class="box has-text-centered">
+    <div v-if="works !== null" class="box has-text-centered">
       <div class="block has-text-centered">
         <h2 class="title py-3">Práce ke schválení</h2>
         <div
@@ -32,7 +32,7 @@ export default {
   name: "ApproveWorks",
   data() {
     return {
-      works: [],
+      works: null,
     };
   },
   created() {

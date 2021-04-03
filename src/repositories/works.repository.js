@@ -17,7 +17,14 @@ export default {
     return Repository.get(`${resource}/${id}`);
   },
   getAllWorks(filterOptions) {
-    console.log(filterOptions);
     return Repository.get(`${resource}`, { params: filterOptions });
+  },
+  rejectWork({ id, guarantorMessage }) {
+    return Repository.post(`${resource}/reject/${id}`, {
+      guarantorMessage,
+    });
+  },
+  approveWork(id) {
+    return Repository.post(`${resource}/approve/${id}`);
   },
 };

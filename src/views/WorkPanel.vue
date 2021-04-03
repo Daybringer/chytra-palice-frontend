@@ -71,7 +71,7 @@
           "
         >
           <span class="has-text-grey-dark"><b>Zpráva: </b></span>
-          {{ work.quarantorMessage + "some text" }}
+          {{ work.guarantorMessage }}
         </p>
       </div>
       <!-- Controls for admin - accept\reject and modal for it-->
@@ -103,7 +103,7 @@
                 <b-input
                   maxlength="200"
                   type="textarea"
-                  v-model="quarantorMessage"
+                  v-model="guarantorMessage"
                 ></b-input>
               </b-field>
               <div class="buttons is-justify-content-center">
@@ -218,20 +218,32 @@ export default {
       this.pageCount = numberOfPages;
     },
     rejectWork() {
-      this.$store.dispatch("rejectWork", {
-        quarantorMessage: this.quarantorMessage,
-        id: this.id,
-      });
-      this.$emit("close");
+      this.$store
+        .dispatch("rejectWork", {
+          guarantorMessage: this.guarantorMessage,
+          id: this.id,
+        })
+        .then(() => {
+          this.work.approvedState = "rejected";
+          this.work.guarantorMessage = this.guarantorMessage;
+          this.guarantorMessage = "";
+          this.isComponentModalActive = false;
+        })
+        .catch((err) => console.log(err));
     },
     approveWork() {
-      this.$store.dispatch("approveWork", { id: this.id });
-      this.$buefy.toast.open({
-        duration: 5000,
-        message: `Práce byla zařazena do soutěže`,
-        position: "is-top",
-        type: "is-primary",
-      });
+      this.$store
+        .dispatch("approveWork", this.id)
+        .then(() => {
+          this.work.approvedState = "approved";
+          this.$buefy.toast.open({
+            duration: 5000,
+            message: `Práce byla zařazena do soutěže`,
+            position: "is-top",
+            type: "is-primary",
+          });
+        })
+        .catch((err) => console.log(err));
     },
   },
   created() {
@@ -246,10 +258,10 @@ export default {
   },
   data() {
     return {
-      work: {},
+      work: null,
       contest: {},
       isComponentModalActive: false,
-      quarantorMessage: "",
+      guarantorMessage: "",
       currPage: 1,
       pageCount: 0,
       pdfSrc: "",
