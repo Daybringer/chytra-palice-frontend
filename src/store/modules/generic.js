@@ -73,14 +73,6 @@ const getters = {
   getWorks: (state) => {
     return state.works;
   },
-  getWorkByID: (state) => (id) => {
-    for (let i = 0; i < state.works.length; i++) {
-      if (state.works[i].ID == id) {
-        return state.works[i];
-      }
-    }
-    return null;
-  },
   getWorksByAuthor: (state) => (authorEmail) => {
     const works = [];
 
@@ -170,6 +162,18 @@ const actions = {
         })
         .catch((err) => {
           console.log(err);
+          reject(err);
+        });
+    });
+  },
+
+  getWorkByID(context, id) {
+    return new Promise((resolve, reject) => {
+      WorksRepository.getWorkByID(id)
+        .then((res) => {
+          resolve(res.data);
+        })
+        .catch((err) => {
           reject(err);
         });
     });

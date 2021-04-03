@@ -13,4 +13,7 @@ export default {
       },
     });
   },
+  getWorkByID(id) {
+    return Repository.get(`${resource}/${id}`);
+  },
 };

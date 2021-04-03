@@ -1,5 +1,5 @@
 <template>
-  <div class="container">
+  <div class="container" v-if="work">
     <div class="box">
       <div class="block">
         <!-- Work's name -->
@@ -11,7 +11,7 @@
         <!-- Date -->
         <p>
           <b>Přidáno: </b
-          >{{ new Date(work.dateAdded).toLocaleDateString("cs") }}
+          >{{ new Date(+work.dateAdded).toLocaleDateString("cs") }}
         </p>
         <!-- Contest -->
         <p>
@@ -145,10 +145,16 @@
 
       <!-- Download buttons-->
       <div class="buttons is-justify-content-center block">
-        <b-button type="is-info" icon-right="book-open-page-variant">
+        <b-button
+          type="is-info"
+          tag="a"
+          :href="epubSrc"
+          :disabled="work.fileType == 'pdf'"
+          icon-right="book-open-page-variant"
+        >
           Stáhnout EPUB
         </b-button>
-        <b-button type="is-info" icon-right="file-pdf">
+        <b-button type="is-info" tag="a" :href="pdfSrc" icon-right="file-pdf">
           Stáhnout PDF
         </b-button>
       </div>
@@ -175,21 +181,39 @@ export default {
     userEmail() {
       return this.$store.getters.getEmail;
     },
-    contest() {
-      return this.$store.getters.getContestByID(this.work.contestID);
-    },
   },
   methods: {
     pdfFailed(error) {
-      console.log("Error has occured: ", error);
+      console.log("Vyskytla se chyba u načítaní PDF: ", error);
     },
-    fetchWork() {
-      // TODO introduce restirictive access
-      this.work = this.$store.getters.getWorkByID(this.id);
-      if (!this.work) {
-        this.$router.push({ path: "/", query: { err: "conNotFound" } });
-      }
+    async fetchWork() {
+      this.$store
+        .dispatch("getWorkByID", this.id)
+        .then((work) => {
+          this.work = work;
+
+          if (!this.work) {
+            this.$router.push({ path: "/", query: { err: "conNotFound" } });
+          } else {
+            this.fetchContest(this.work.contestID);
+          }
+        })
+        .catch(() => {
+          this.$router.push({ path: "/", query: { err: "conNotFound" } });
+        });
     },
+    async fetchContest(id) {
+      this.$store
+        .dispatch("getContestByID", id)
+        .then((contest) => {
+          this.contest = contest;
+        })
+        .catch((err) => {
+          console.log(err);
+          this.$router.push({ path: "/", query: { err: "conNotFound" } });
+        });
+    },
+    // FIXME remove it
     setPageCount(numberOfPages) {
       this.pageCount = numberOfPages;
     },
@@ -210,18 +234,26 @@ export default {
       });
     },
   },
-  beforeMount() {
+  created() {
     this.fetchWork();
+    if (process.env.NODE_ENV == "production") {
+      this.pdfSrc = `http://palice.gjk.cz:3000/works/${this.id}/pdf`;
+      this.epubSrc = `http://palice.gjk.cz:3000/works/${this.id}/epub`;
+    } else {
+      this.pdfSrc = `http://localhost:3000/works/${this.id}/pdf`;
+      this.epubSrc = `http://localhost:3000/works/${this.id}/epub`;
+    }
   },
   data() {
     return {
+      work: {},
+      contest: {},
       isComponentModalActive: false,
       quarantorMessage: "",
-      work: {},
       currPage: 1,
       pageCount: 0,
-      pdfSrc:
-        "https://cdn.rawgit.com/mozilla/pdf.js/c6e8ca86/test/pdfs/freeculture.pdf",
+      pdfSrc: "",
+      epubSrc: "",
     };
   },
 };

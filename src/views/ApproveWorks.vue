@@ -36,13 +36,13 @@
 <script>
 export default {
   name: "ApproveWorks",
-  computed: {
-    works() {
-      const works = this.$store.getters.getWorks;
-      return works.filter((work) => work.approvedState === "pending");
-    },
+  data() {
+    return {
+      works: [],
+    };
   },
   methods: {
+    async fetchPendingWorks() {},
     getContestByID(id) {
       return this.$store.getters.getContestByID(id);
     },
