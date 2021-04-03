@@ -10,5 +10,6 @@ export default axios.create({
   baseURL,
   headers: {
     Authorization: "",
+    "content-type": "application/json",
   },
 });

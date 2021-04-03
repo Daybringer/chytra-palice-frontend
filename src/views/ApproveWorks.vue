@@ -5,20 +5,14 @@
         <h2 class="title py-3">Práce ke schválení</h2>
         <div
           v-for="work in works"
-          :key="work.ID"
+          :key="work.id"
           class="card mt-4 is-clickable activeContestCard columns mx-0"
-          @click="routeToWork(work.ID)"
+          @click="routeToWork(work.id)"
         >
           <p
             class="column is-flex is-justify-content-center is-align-items-center has-text-weight-bold has-text-primary"
           >
             {{ work.name }}
-          </p>
-
-          <p
-            class="column is-flex is-justify-content-center is-align-items-center has-text-weight-bold has-text-grey"
-          >
-            {{ getContestByID(work.contestID).name }}
           </p>
 
           <p
@@ -41,11 +35,16 @@ export default {
       works: [],
     };
   },
+  created() {
+    this.fetchPendingWorks();
+  },
   methods: {
-    async fetchPendingWorks() {},
-    getContestByID(id) {
-      return this.$store.getters.getContestByID(id);
+    async fetchPendingWorks() {
+      this.works = await this.$store.dispatch("getAllWorks", {
+        approvedState: "pending",
+      });
     },
+
     routeToWork(id) {
       this.$router.push(`/prace/${id}`);
     },

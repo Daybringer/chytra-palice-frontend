@@ -5,6 +5,7 @@ const AuthRepository = RepositoryFactory.get("auth");
 const RootRepository = RepositoryFactory.get("root");
 const ContestsRepository = RepositoryFactory.get("contests");
 const WorksRepository = RepositoryFactory.get("works");
+const CommentsRepository = RepositoryFactory.get("comments");
 
 const state = () => ({
   admin: false,
@@ -140,7 +141,6 @@ const actions = {
   },
 
   // Works
-
   createWork(context, { createWorkDto, file }) {
     return new Promise((resolve, reject) => {
       // Creating the work entity without uploading the file
@@ -179,6 +179,51 @@ const actions = {
     });
   },
 
+  getAllWorks(context, filterOptions) {
+    return new Promise((resolve, reject) => {
+      WorksRepository.getAllWorks(filterOptions)
+        .then((res) => {
+          resolve(res.data);
+        })
+        .catch((err) => {
+          reject(err);
+        });
+    });
+  },
+  // Comments
+  getAllCommentsByWorkID(context, workID) {
+    return new Promise((resolve, reject) => {
+      CommentsRepository.getAllCommentsByWorkID(workID)
+        .then((res) => {
+          resolve(res.data);
+        })
+        .catch((err) => {
+          reject(err);
+        });
+    });
+  },
+  createComment(context, createCommentDto) {
+    return new Promise((resolve, reject) => {
+      CommentsRepository.createComment(createCommentDto)
+        .then((res) => {
+          resolve(res.data);
+        })
+        .catch((err) => {
+          reject(err);
+        });
+    });
+  },
+  deleteComment(context, id) {
+    return new Promise((resolve, reject) => {
+      CommentsRepository.deleteComment(id)
+        .then((res) => {
+          resolve(res.data);
+        })
+        .catch((err) => {
+          reject(err);
+        });
+    });
+  },
   // Contests
   getContestByID(context, id) {
     return new Promise((resolve, reject) => {
@@ -203,6 +248,8 @@ const actions = {
       .then((res) => console.log(res))
       .catch((err) => console.log(err));
   },
+
+  //-----------------------------------------------------------------------------------------------------------
   // Posts
   savePosts({ state }) {
     window.localStorage.setItem("posts", JSON.stringify(state.posts));
@@ -290,40 +337,6 @@ const actions = {
   },
   saveTags({ state }) {
     window.localStorage.setItem("tags", JSON.stringify(state.tags));
-  },
-
-  // Comments
-
-  addComment(
-    { commit, state, dispatch },
-    { authorEmail, authorName, workID, message }
-  ) {
-    let ID;
-    if (Object.keys(state.comments).length === 0) {
-      ID = 0;
-    } else {
-      if (Object.keys(state.comments[workID]).length === 0) {
-        ID = 0;
-      } else {
-        ID =
-          state.comments[workID][Object.keys(state.comments[workID]).length - 1]
-            .ID + 1;
-      }
-    }
-
-    const newComment = { ID, authorEmail, authorName, workID, message };
-
-    commit("addComment", newComment);
-    dispatch("saveComments");
-  },
-
-  saveComments({ state }) {
-    window.localStorage.setItem("comments", JSON.stringify(state.comments));
-  },
-
-  deleteComment({ commit, dispatch }, { ID, workID }) {
-    commit("deleteComment", { ID, workID });
-    dispatch("saveComments");
   },
 };
 

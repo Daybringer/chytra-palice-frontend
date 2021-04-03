@@ -16,4 +16,8 @@ export default {
   getWorkByID(id) {
     return Repository.get(`${resource}/${id}`);
   },
+  getAllWorks(filterOptions) {
+    console.log(filterOptions);
+    return Repository.get(`${resource}`, { params: filterOptions });
+  },
 };

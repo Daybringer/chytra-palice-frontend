@@ -2,22 +2,25 @@
   <div class="container mb-5">
     <div class="box has-text-centered ">
       <h3 class="subtitle">Komentářová sekce</h3>
-      <comment-blade
-        v-for="comment in commentCollection"
-        :key="comment.ID"
-        :author="comment.authorName"
-        :message="comment.message"
-        :ID="comment.ID"
-        :workID="comment.workID"
-      />
-
-      <div class="field has-addons is-justify-content-center">
+      <div class="block">
+        <comment-blade
+          v-for="comment in comments"
+          :key="comment.id"
+          :author="comment.authorName"
+          :message="comment.message"
+          :id="comment.id"
+          @removeComment="removeComment"
+        />
+      </div>
+      <div class="field">
         <div class="control">
           <b-input
-            class="is-inline"
+            expanded
             v-model="newComment"
             @keyup.enter.native="saveComment"
             placeholder="Napiš komentář"
+            maxlength="400"
+            type="textarea"
           ></b-input>
         </div>
         <div class="control">
@@ -38,46 +41,55 @@ export default {
   components: {
     CommentBlade,
   },
-  computed: {
-    userEmail() {
-      return this.$store.getters.getEmail;
-    },
-    userName() {
-      return this.$store.getters.getName;
-    },
-  },
   methods: {
-    fetchCommentCollection() {
-      this.commentCollection = this.$store.getters.getCommentCollectionByWorkID(
+    async getAllCommentsByWorkID() {
+      this.comments = await this.$store.dispatch(
+        "getAllCommentsByWorkID",
         this.workID
       );
     },
-    saveComment() {
-      const comment = {
-        authorEmail: this.userEmail,
-        authorName: this.userName,
+    async saveComment() {
+      const createCommentDto = {
         workID: this.workID,
-        message: this.newComment,
+        message: this.newComment.trim(),
       };
-      this.$store.dispatch("addComment", comment);
-      this.newComment = "";
-      if (!this.commentCollection) this.fetchCommentCollection();
-      this.$buefy.toast.open({
-        duration: 5000,
-        message: `Komentář byl úspěšně uložen`,
-        position: "is-top",
-        type: "is-primary",
-      });
+      if (createCommentDto.message !== "")
+        this.$store
+          .dispatch("createComment", createCommentDto)
+          .then((comment) => {
+            this.comments.push(comment);
+            this.$buefy.toast.open({
+              duration: 5000,
+              message: `Komentář byl úspěšně uložen`,
+              position: "is-top",
+              type: "is-primary",
+            });
+            this.newComment = "";
+          })
+
+          .catch((err) => {
+            console.log(err);
+            this.$buefy.toast.open({
+              duration: 5000,
+              message: `Při ukládání komentáře došlo k chybě`,
+              position: "is-top",
+              type: "is-warning",
+            });
+          });
+    },
+    removeComment(id) {
+      for (let x = 0; x < this.comments.length; x++) {
+        if (this.comments[x].id == id) this.comments.splice(x, 1);
+      }
     },
   },
-  mounted() {
-    this.fetchCommentCollection();
-    console.log(this.commentCollection);
+  created() {
+    this.getAllCommentsByWorkID();
   },
   data() {
     return {
       newComment: "",
-      commentCollection: [],
+      comments: [],
     };
   },
 };

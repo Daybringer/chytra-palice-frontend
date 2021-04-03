@@ -45,7 +45,7 @@
 <script>
 export default {
   name: "CommentBlade",
-  props: ["author", "message", "ID", "workID"],
+  props: ["author", "message", "id", "workID"],
   computed: {
     isAdmin() {
       return this.$store.getters.isAdmin;
@@ -56,9 +56,8 @@ export default {
       this.isComponentModalActive = false;
     },
     deleteComment() {
-      this.$store.dispatch("deleteComment", {
-        ID: this.ID,
-        workID: this.workID,
+      this.$store.dispatch("deleteComment", this.id).then(() => {
+        this.$emit("removeComment", this.id);
       });
       this.isComponentModalActive = false;
     },
