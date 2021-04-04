@@ -2,13 +2,11 @@
   <footer class="custom-footer has-background-white-bis">
     <div class="has-text-centered">
       <p>
-        Vytvořil
-        <a href="https://daybringer.github.io" target="_">Michal Vaňata</a>
+        Pro GJK
+        <a href="https://vanata.dev" target="_">Michal Vaňata</a>
         <br />
         Licencováno pod
         <a href="https://opensource.org/licenses/MIT">MIT</a>
-        <!-- TODO remove link to dev -->
-        <router-link to="/dev" class="px-2">dev</router-link>
       </p>
     </div>
   </footer>

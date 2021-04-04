@@ -6,7 +6,7 @@ import store from "../store";
 
 // Components
 import Index from "../views/Index.vue";
-import DevPanel from "../views/DevPanel.vue";
+
 import NewPostPanel from "../views/NewPostPanel.vue";
 import PostPanel from "../views/PostPanel.vue";
 import EditPostPanel from "../views/EditPostPanel.vue";
@@ -28,14 +28,6 @@ const routes = [
     component: Index,
     meta: {
       title: "Chytrá palice - literární soutěž GJK",
-    },
-  },
-  // TODO remove on deployment
-  {
-    path: "/dev",
-    component: DevPanel,
-    meta: {
-      title: "Chytrá palice - Dev Dashboard",
     },
   },
   {

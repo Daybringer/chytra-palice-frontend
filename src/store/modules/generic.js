@@ -2,7 +2,6 @@ import Repository from "@/repositories/Repository";
 import { RepositoryFactory } from "@/repositories/RepositoryFactory";
 import jwt_decode from "jwt-decode";
 const AuthRepository = RepositoryFactory.get("auth");
-const RootRepository = RepositoryFactory.get("root");
 const ContestsRepository = RepositoryFactory.get("contests");
 const WorksRepository = RepositoryFactory.get("works");
 const CommentsRepository = RepositoryFactory.get("comments");
@@ -241,18 +240,16 @@ const actions = {
         .catch((err) => reject(err));
     });
   },
-
-  // Dev methods
-  changeUser({ commit }, payload) {
-    commit("setUser", payload);
-    commit("logIn");
+  getAllContests() {
+    return new Promise((resolve, reject) => {
+      ContestsRepository.getAllContests()
+        .then((res) => {
+          resolve(res.data);
+          console.log(res.data);
+        })
+        .catch((err) => reject(err));
+    });
   },
-  testSecure() {
-    RootRepository.testing()
-      .then((res) => console.log(res))
-      .catch((err) => console.log(err));
-  },
-
   //-----------------------------------------------------------------------------------------------------------
   // Posts
   savePosts({ state }) {
@@ -310,10 +307,7 @@ const actions = {
   createContest(context, createContestDto) {
     return new Promise((resolve, reject) => {
       ContestsRepository.createContest(createContestDto)
-        .then((res) => {
-          console.log("contest (vuex): ", res.data);
-          resolve(res.data.id);
-        })
+        .then((res) => resolve(res.data.id))
         .catch((err) => {
           console.log(err);
           reject(err);
