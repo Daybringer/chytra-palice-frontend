@@ -5,9 +5,9 @@
         <h2 class="title py-3">Moje práce</h2>
         <div
           v-for="work in myWorks"
-          :key="work.ID"
+          :key="work.id"
           class="card mt-4 is-clickable activeContestCard columns mx-0"
-          @click="routeToWork(work.ID)"
+          @click="routeToWork(work.id)"
         >
           <p
             class="column is-flex is-justify-content-center is-align-items-center has-text-weight-bold has-text-primary"
@@ -36,7 +36,7 @@
           <p
             class="column is-flex is-justify-content-center is-align-items-center"
           >
-            {{ "x0 navštívení" }}
+            {{ "x" + work.timesRead + " přečteno" }}
           </p>
         </div>
       </div>
@@ -57,16 +57,26 @@
 export default {
   name: "MyWorksPanel",
   computed: {
-    myWorks() {
-      return this.$store.getters.getWorksByAuthor(this.myEmail);
-    },
     myEmail() {
       return this.$store.getters.getEmail;
     },
   },
+  data() {
+    return {
+      myWorks: [],
+    };
+  },
+  created() {
+    this.fetchMyWorks();
+  },
   methods: {
     routeToWork(id) {
       this.$router.push(`/prace/${id}`);
+    },
+    async fetchMyWorks() {
+      this.myWorks = await this.$store.dispatch("getAllWorks", {
+        authorEmail: this.myEmail,
+      });
     },
   },
 };

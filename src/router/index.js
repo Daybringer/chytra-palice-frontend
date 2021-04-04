@@ -12,13 +12,13 @@ import PostPanel from "../views/PostPanel.vue";
 import EditPostPanel from "../views/EditPostPanel.vue";
 import NotFound from "../views/NotFound.vue";
 import NewContestPanel from "../views/NewContestPanel.vue";
-import ContestsPanel from "../views/ContestsPanel.vue";
+import AllContestsPanel from "../views/AllContestsPanel.vue";
 import ContestPanel from "../views/ContestPanel.vue";
 import NewWorkPanel from "../views/NewWorkPanel.vue";
 import AllWorksPanel from "../views/AllWorksPanel.vue";
 import WorkPanel from "../views/WorkPanel.vue";
 import MyWorksPanel from "../views/MyWorksPanel.vue";
-import ApproveWorks from "../views/ApproveWorks.vue";
+import ApproveWorksPanel from "../views/ApproveWorksPanel.vue";
 
 Vue.use(VueRouter);
 
@@ -66,7 +66,7 @@ const routes = [
   },
   {
     path: "/schvaleni",
-    component: ApproveWorks,
+    component: ApproveWorksPanel,
     meta: {
       title: "Chytrá palice - Schválení prací",
       is_admin: true,
@@ -108,7 +108,7 @@ const routes = [
   },
   {
     path: "/souteze",
-    component: ContestsPanel,
+    component: AllContestsPanel,
     meta: {
       title: "Chytrá palice - Přehled soutěží",
     },

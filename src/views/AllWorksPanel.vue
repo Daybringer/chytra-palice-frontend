@@ -166,32 +166,35 @@ export default {
   name: "AllWorksPanel",
   methods: {
     tableClick(row) {
-      this.$router.push(`/prace/${row.ID}`);
+      this.$router.push(`/prace/${row.id}`);
     },
     filter() {
       const filteredWorks = [];
       this.works.forEach((work) => {
         let passed = true;
-        if (this.search.name) {
+        if (this.search.name.trim()) {
           if (!this.strContains(work.name, this.search.name)) passed = false;
         }
+
         if (this.advancedSearch) {
-          if (this.search.author) {
+          if (this.search.author.trim()) {
             if (!this.strContains(work.authorName, this.search.author))
               passed = false;
           }
 
+          console.log(this.keywords);
+
           this.keywords.forEach((keyword) => {
-            if (!this.work.keywords.includes(keyword)) passed = false;
+            if (!work.keywords.includes(keyword)) passed = false;
           });
 
           if (this.search.maturita && !work.isMaturitaProject) passed = false;
 
           if (this.search.subject !== "all")
             if (this.search.subject !== work.subject) return false;
-
-          if (passed) filteredWorks.push(work);
         }
+
+        if (passed) filteredWorks.push(work);
       });
       this.filteredWorks = filteredWorks;
     },
