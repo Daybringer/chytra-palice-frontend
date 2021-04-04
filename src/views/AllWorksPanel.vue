@@ -37,50 +37,67 @@
                 >
                 </b-input>
               </b-field>
-              <b-field label="Název soutěže" label-position="on-border">
-                <b-input
-                  name="contest"
-                  placeholder="Hledat..."
-                  type="search"
-                  icon-pack="fas"
-                  icon="search"
-                  v-model="search.contest"
-                  v-debounce="filter"
+              <b-field label="Klíčová slova" :label-position="'on-border'">
+                <b-taginput
+                  v-model="keywords"
+                  :data="filteredKeywords"
+                  autocomplete
+                  attached
+                  :open-on-focus="true"
+                  icon="label"
+                  placeholder="Hledat dle klíčových slov"
+                  @typing="getFilteredKeywords"
+                  @input="filter"
                 >
-                </b-input>
+                </b-taginput>
               </b-field>
             </div>
-            <div class="block">
-              <b-field label="Kategorie">
-                <b-checkbox v-model="search.categories" native-value="palice">
-                  Chytrá palice
-                </b-checkbox>
-                <b-checkbox v-model="search.categories" native-value="palicka">
-                  Chytrá palička
-                </b-checkbox>
-                <b-checkbox v-model="search.categories" native-value="other">
-                  Jiné kategorie
-                </b-checkbox>
-              </b-field>
-            </div>
-            <b-field label="Umístění">
-              <b-checkbox v-model="search.placings" native-value="1">
+            <b-field label="Předmět" :label-position="'on-border'">
+              <b-select
+                v-model="search.subject"
+                placeholder="Vyberte předmět"
+                @input="filter"
+              >
+                <option value="all">
+                  -
+                </option>
+                <option value="cestina">
+                  Čeština
+                </option>
+                <option value="hst">
+                  HST
+                </option>
+                <option value="dejepis">
+                  Dějepis
+                </option>
+                <option value="jine">
+                  Jiné
+                </option>
+              </b-select>
+            </b-field>
+            <!-- <b-field label="Umístění">
+              <b-checkbox v-model="search.standings[0]">
                 1. místo
               </b-checkbox>
             </b-field>
             <b-field>
-              <b-checkbox v-model="search.placings" native-value="2">
+              <b-checkbox v-model="search.standings[1]">
                 2. místo
               </b-checkbox>
             </b-field>
             <b-field>
-              <b-checkbox v-model="search.placings" native-value="3">
+              <b-checkbox v-model="search.standings[2]">
                 3. místo
               </b-checkbox>
             </b-field>
             <b-field>
-              <b-checkbox v-model="search.placings" native-value="4">
+              <b-checkbox v-model="search.standings[3]">
                 Bez umístění
+              </b-checkbox>
+            </b-field> -->
+            <b-field>
+              <b-checkbox v-model="search.maturita" @input="filter">
+                <b>Maturitní práce</b>
               </b-checkbox>
             </b-field>
           </div>
@@ -90,6 +107,8 @@
       <div class="block">
         <b-table
           :data="filteredWorks"
+          :paginated="true"
+          :per-page="15"
           striped
           hoverable
           mobile-cards
@@ -97,16 +116,6 @@
           :default-sort="['id', 'desc']"
           class="is-clickable"
         >
-          <b-table-column
-            field="ID"
-            label="ID"
-            width="40"
-            numeric
-            v-slot="props"
-            sortable
-          >
-            {{ props.row.ID }}
-          </b-table-column>
           <b-table-column
             field="name"
             label="Název práce"
@@ -125,34 +134,16 @@
           >
             {{ props.row.authorName }}
           </b-table-column>
+
           <b-table-column
-            field="contest"
-            label="Soutěž"
-            v-slot="props"
-            sortable
-            centered
-          >
-            {{ props.row.contest }}
-          </b-table-column>
-          <b-table-column
-            field="category"
-            label="Kategorie"
-            v-slot="props"
-            sortable
-            centered
-          >
-            {{ props.row.category }}
-          </b-table-column>
-          <b-table-column
-            field="standing"
-            width="40"
-            label="Umístění"
+            field="class"
+            label="Třída"
             centered
             numeric
             v-slot="props"
             sortable
           >
-            {{ props.row.id }}
+            {{ props.row.class }}
           </b-table-column>
           <b-table-column
             field="date"
@@ -162,7 +153,7 @@
             sortable
             centered
           >
-            {{ new Date(props.row.dateAdded).toLocaleDateString() }}
+            {{ new Date(+props.row.dateAdded).toLocaleDateString("cs") }}
           </b-table-column>
         </b-table>
       </div>
@@ -180,18 +171,27 @@ export default {
     filter() {
       const filteredWorks = [];
       this.works.forEach((work) => {
+        let passed = true;
         if (this.search.name) {
-          if (!this.strContains(work.name, this.search.name)) return;
+          if (!this.strContains(work.name, this.search.name)) passed = false;
         }
         if (this.advancedSearch) {
           if (this.search.author) {
-            if (!this.strContains(work.author, this.search.author)) return;
+            if (!this.strContains(work.authorName, this.search.author))
+              passed = false;
           }
-          if (this.search.contest) {
-            if (!this.strContains(work.contest, this.search.contest)) return;
-          }
+
+          this.keywords.forEach((keyword) => {
+            if (!this.work.keywords.includes(keyword)) passed = false;
+          });
+
+          if (this.search.maturita && !work.isMaturitaProject) passed = false;
+
+          if (this.search.subject !== "all")
+            if (this.search.subject !== work.subject) return false;
+
+          if (passed) filteredWorks.push(work);
         }
-        filteredWorks.push(work);
       });
       this.filteredWorks = filteredWorks;
     },
@@ -206,6 +206,11 @@ export default {
         .replace(/[\u0300-\u036f]/g, "");
       return normalizedString.includes(normalizedSubstring);
     },
+    getFilteredKeywords(text) {
+      this.filteredKeywords = this.allKeywords.filter((keyword) => {
+        return this.strContains(keyword, text);
+      });
+    },
     async fetchWorks() {
       this.$store
         .dispatch("getAllWorks", {
@@ -217,9 +222,14 @@ export default {
         })
         .catch((err) => console.log(err));
     },
+    async fetchKeywords() {
+      this.allKeywords = await this.$store.dispatch("getAllKeywords");
+      this.filteredKeywords = this.allKeywords;
+    },
   },
   created() {
     this.fetchWorks();
+    this.fetchKeywords();
   },
   data() {
     return {
@@ -228,13 +238,14 @@ export default {
       search: {
         name: "",
         author: "",
-        contest: "",
-        categories: ["palice", "palicka", "other"],
-        placings: ["1", "2", "3", "4"],
-        dateFrom: "",
-        dateTo: "",
+        standings: [true, true, true, true],
+        subject: "all",
+        maturita: false,
       },
       advancedSearch: false,
+      keywords: [],
+      filteredKeywords: [],
+      allKeywords: [],
     };
   },
 };

@@ -135,6 +135,8 @@
         <div class="block">
           <b-table
             :data="filteredContests"
+            :paginated="true"
+            :per-page="15"
             striped
             hoverable
             mobile-cards

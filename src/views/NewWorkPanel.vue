@@ -127,6 +127,7 @@
             v-model="keywords"
             :data="filteredKeywords"
             autocomplete
+            attached
             :allow-new="true"
             :open-on-focus="true"
             icon="label"
@@ -206,7 +207,6 @@ export default {
     },
     async fetchKeywords() {
       this.allKeywords = await this.$store.dispatch("getAllKeywords");
-      console.log(this.allKeywords);
       this.filteredKeywords = this.allKeywords;
     },
     saveWork() {
