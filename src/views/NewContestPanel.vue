@@ -98,8 +98,8 @@ import { object, string, date } from "yup";
 const newContestSchema = object().shape({
   name: string()
     .required("Vyplňte název soutěže")
-    .min(3, "Název soutěže je moc krátký (3-30 znaků)")
-    .max(30, "Název soutěže je moc dlouhý (3-30 znaků)"),
+    .min(3, "Název soutěže je moc krátký (3-60 znaků)")
+    .max(60, "Název soutěže je moc dlouhý (3-60 znaků)"),
   endDate: date()
     .required("Vyplňte datum uzávěrky")
     .typeError("Vyplňte datum uzávěrky"),
@@ -107,7 +107,7 @@ const newContestSchema = object().shape({
     message: "Zvolte kategorii",
     excludeEmptyString: false,
   }),
-  description: string().max(150),
+  description: string().max(200),
 });
 
 export default {
@@ -154,6 +154,7 @@ export default {
             description: this.contest.description.trim(),
           })
           .then((id) => {
+            console.log("id (NewContestPanel): ", id);
             this.$buefy.toast.open({
               duration: 5000,
               message: `Soutěž byla uložena`,

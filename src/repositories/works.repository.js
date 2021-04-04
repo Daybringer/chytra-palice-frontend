@@ -27,4 +27,7 @@ export default {
   approveWork(id) {
     return Repository.post(`${resource}/approve/${id}`);
   },
+  getAllKeywords() {
+    return Repository.get(`${resource}/keywords/get/all`);
+  },
 };

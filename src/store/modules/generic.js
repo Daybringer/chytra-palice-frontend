@@ -226,6 +226,13 @@ const actions = {
         .catch((err) => reject(err));
     });
   },
+  getAllKeywords() {
+    return new Promise((resolve, reject) => {
+      WorksRepository.getAllKeywords()
+        .then((res) => resolve(res.data))
+        .catch((err) => reject(err));
+    });
+  },
   // Contests
   getContestByID(context, id) {
     return new Promise((resolve, reject) => {
@@ -303,10 +310,12 @@ const actions = {
   createContest(context, createContestDto) {
     return new Promise((resolve, reject) => {
       ContestsRepository.createContest(createContestDto)
-        .then((contest) => {
-          resolve(contest.id);
+        .then((res) => {
+          console.log("contest (vuex): ", res.data);
+          resolve(res.data.id);
         })
         .catch((err) => {
+          console.log(err);
           reject(err);
         });
     });

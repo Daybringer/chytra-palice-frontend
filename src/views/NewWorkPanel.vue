@@ -124,14 +124,14 @@
         <!-- Keywords -->
         <b-field label="Klíčová slova" :label-position="'on-border'">
           <b-taginput
-            v-model="tags"
-            :data="filteredTags"
+            v-model="keywords"
+            :data="filteredKeywords"
             autocomplete
             :allow-new="true"
             :open-on-focus="true"
             icon="label"
             placeholder="Přidat klíčová slova"
-            @typing="getFilteredTags"
+            @typing="getFilteredKeywords"
           >
           </b-taginput>
         </b-field>
@@ -204,6 +204,11 @@ export default {
           this.$router.push({ path: "/", query: { err: "conNotFound" } });
         });
     },
+    async fetchKeywords() {
+      this.allKeywords = await this.$store.dispatch("getAllKeywords");
+      console.log(this.allKeywords);
+      this.filteredKeywords = this.allKeywords;
+    },
     saveWork() {
       this.validate("name");
       this.validate("email");
@@ -232,7 +237,7 @@ export default {
               contestID: this.contestID,
               fileType: this.fileExtension,
               class: this.data.class,
-              keywords: this.formatKeywords(this.tags),
+              keywords: this.formatKeywords(this.keywords),
               isMaturitaProject: this.data.isMaturita,
               subject: this.data.subject,
             },
@@ -327,12 +332,13 @@ export default {
         }
       }
     },
-    getFilteredTags(text) {
+    getFilteredKeywords(text) {
       const normalizedText = text
         .toLowerCase()
         .normalize("NFD")
         .replace(/[\u0300-\u036f]/g, "");
-      this.filteredTags = this.allTags.filter((keyword) => {
+
+      this.filteredKeywords = this.allKeywords.filter((keyword) => {
         return keyword
           .toString()
           .toLowerCase()
@@ -371,8 +377,7 @@ export default {
     }
     // fetching contest data
     this.fetchContest();
-    // TODO
-    // this.filteredTags = this.allTags;
+    this.fetchKeywords();
   },
   data() {
     return {
@@ -424,9 +429,9 @@ export default {
         class: "",
       },
       authorName: "",
-      // TODO Load the tags from backend
-      tags: [],
-      filteredTags: [],
+      keywords: [],
+      allKeywords: [],
+      filteredKeywords: [],
       contest: null,
       fileExtension: "",
     };
