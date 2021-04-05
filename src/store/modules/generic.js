@@ -191,6 +191,13 @@ const actions = {
         .catch((err) => reject(err));
     });
   },
+  getContestByIDUnfiltered(context, id) {
+    return new Promise((resolve, reject) => {
+      ContestsRepository.getContestByIDUnfiltered(id)
+        .then((res) => resolve(res.data))
+        .catch((err) => reject(err));
+    });
+  },
   getAllContests() {
     return new Promise((resolve, reject) => {
       ContestsRepository.getAllContests()
@@ -211,6 +218,13 @@ const actions = {
     return new Promise((resolve, reject) => {
       ContestsRepository.removeContest(id)
         .then((res) => resolve(res.data))
+        .catch((err) => reject(err));
+    });
+  },
+  updateContest(context, { id, updateContestDto }) {
+    return new Promise((resolve, reject) => {
+      ContestsRepository.updateContest(id, updateContestDto)
+        .then(() => resolve(id))
         .catch((err) => reject(err));
     });
   },

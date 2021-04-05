@@ -15,7 +15,13 @@ export default {
   getContestByID(id) {
     return Repository.get(`${resource}/${id}`);
   },
+  getContestByIDUnfiltered(id) {
+    return Repository.get(`${resource}/${id}/unfiltered`);
+  },
   removeContest(id) {
     return Repository.delete(`${resource}/${id}`);
+  },
+  updateContest(id, updateContestDto) {
+    return Repository.patch(`${resource}/${id}`, updateContestDto);
   },
 };

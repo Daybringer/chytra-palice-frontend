@@ -19,6 +19,7 @@ import AllWorksPanel from "../views/AllWorksPanel.vue";
 import WorkPanel from "../views/WorkPanel.vue";
 import MyWorksPanel from "../views/MyWorksPanel.vue";
 import ApproveWorksPanel from "../views/ApproveWorksPanel.vue";
+import EditContestPanel from "../views/EditContestPanel.vue";
 
 Vue.use(VueRouter);
 
@@ -118,6 +119,15 @@ const routes = [
     // Title is overwritten in component
     meta: {
       title: "Chytrá palice - Soutěž",
+    },
+  },
+  {
+    path: "/souteze/edit/:id",
+    component: EditContestPanel,
+    meta: {
+      title: "Chytrá palice - Úprava soutěže",
+      is_logged: true,
+      is_admin: true,
     },
   },
   {

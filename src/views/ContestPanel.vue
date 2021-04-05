@@ -131,7 +131,12 @@
           </template>
         </b-modal>
 
-        <b-button v-show="admin" icon-left="close-thick" type="is-warning"
+        <b-button
+          v-show="admin"
+          tag="router-link"
+          :to="`/souteze/edit/${id}`"
+          icon-left="close-thick"
+          type="is-warning"
           >Upravit soutěž</b-button
         >
         <b-button
