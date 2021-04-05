@@ -141,7 +141,7 @@
             hoverable
             mobile-cards
             @click="tableClick"
-            :default-sort="['running', 'asc']"
+            :default-sort="['running', 'desc']"
             class="is-clickable"
           >
             <b-table-column

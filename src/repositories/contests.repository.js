@@ -9,7 +9,13 @@ export default {
   createContest(createContestDto) {
     return Repository.post(`${resource}`, createContestDto);
   },
+  setWinners(setWinnersDto) {
+    return Repository.post(`${resource}/winners`, setWinnersDto);
+  },
   getContestByID(id) {
     return Repository.get(`${resource}/${id}`);
+  },
+  removeContest(id) {
+    return Repository.delete(`${resource}/${id}`);
   },
 };

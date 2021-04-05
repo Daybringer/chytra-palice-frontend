@@ -28,6 +28,6 @@ export default {
     return Repository.post(`${resource}/approve/${id}`);
   },
   getAllKeywords() {
-    return Repository.get(`${resource}/keywords/get/all`);
+    return Repository.get(`${resource}/keywords`);
   },
 };

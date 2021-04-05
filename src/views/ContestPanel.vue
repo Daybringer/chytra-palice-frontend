@@ -1,6 +1,7 @@
 <template>
   <div class="container mb-5">
-    <div v-if="contest" class="box">
+    <div v-if="contest && works" class="box">
+      <!-- Contest info -->
       <div class="block">
         <h1 class="title has-text-primary">{{ contest.name }}</h1>
 
@@ -33,6 +34,7 @@
         </p>
         <p><b>Popis: </b> {{ contest.description }}</p>
       </div>
+      <!-- Control buttons -->
       <div class="buttons">
         <b-button
           v-show="contest.running"
@@ -71,8 +73,8 @@
                 <div style="width:500px;height:1px;"></div>
                 <div class="block">
                   <div
-                    v-for="work in approvedWorks"
-                    :key="work.ID"
+                    v-for="work in works"
+                    :key="work.id"
                     class="card mt-4 columns mx-0"
                   >
                     <p
@@ -86,28 +88,28 @@
                       <div class="buttons">
                         <b-button
                           type="is-gold"
-                          @click="moveToWinners(0, work.ID)"
-                          :outlined="!winners[0].includes(work.ID)"
+                          @click="moveToWinners(0, work.id)"
+                          :outlined="!winners[0].includes(work.id)"
                           icon-right="trophy"
                         >
                         </b-button>
                         <b-button
                           type="is-silver"
-                          @click="moveToWinners(1, work.ID)"
-                          :outlined="!winners[1].includes(work.ID)"
+                          @click="moveToWinners(1, work.id)"
+                          :outlined="!winners[1].includes(work.id)"
                           icon-right="trophy"
                         >
                         </b-button>
                         <b-button
                           type="is-bronze"
-                          @click="moveToWinners(2, work.ID)"
-                          :outlined="!winners[2].includes(work.ID)"
+                          @click="moveToWinners(2, work.id)"
+                          :outlined="!winners[2].includes(work.id)"
                           icon-right="trophy"
                         >
                         </b-button>
                         <b-button
                           type="is-danger"
-                          @click="removeFromWinners(work.ID)"
+                          @click="removeFromWinners(work.id)"
                           icon-right="close-thick"
                         >
                         </b-button>
@@ -158,30 +160,27 @@
                   <b-button class="button is-danger" @click="removeContest">
                     Potvrdit vymazání soutěže
                   </b-button>
-                  <b-button
-                    class="button is-info"
-                    @click="isRemoveModalActive = false"
-                  >
-                    Uzavřít soutěž
-                  </b-button>
                 </div>
               </div>
             </div>
           </template>
         </b-modal>
       </div>
+      <!-- Awarded works -->
       <div v-show="!contest.running" class="block has-text-centered">
         <h2 class="title">Oceněné práce</h2>
         <div class="block">
           <div
-            v-for="work in winnerWorks"
-            :key="work.ID + 'w'"
+            v-for="workID in contest.first.concat(
+              contest.second.concat(contest.third)
+            )"
+            :key="workID"
             class="card mt-4 is-clickable activeContestCard columns mx-0"
-            @click="routeToWork(work.ID)"
+            @click="routeToWork(workID)"
             :class="
-              winners[0].includes(work.ID)
+              contest.first.includes(workID)
                 ? 'has-border-gold'
-                : winners[1].includes(work.ID)
+                : contest.second.includes(workID)
                 ? 'has-border-silver'
                 : 'has-border-bronze'
             "
@@ -192,9 +191,9 @@
               <span
                 class="icon"
                 :class="
-                  winners[0].includes(work.ID)
+                  contest.first.includes(workID)
                     ? 'has-text-gold'
-                    : winners[1].includes(work.ID)
+                    : contest.second.includes(workID)
                     ? 'has-text-silver'
                     : 'has-text-bronze'
                 "
@@ -205,26 +204,27 @@
             <p
               class="column is-flex is-justify-content-center is-align-items-center has-text-weight-medium has-text-gray"
             >
-              {{ work.name }}
+              {{ findWorkByID(workID).name }}
             </p>
 
             <p
               class="column is-flex is-justify-content-center is-align-items-center has-text-gray"
             >
-              {{ work.authorName }}
+              {{ findWorkByID(workID).authorName }}
             </p>
           </div>
         </div>
       </div>
+      <!-- Nominated works -->
       <div class="block has-text-centered mb-5">
         <h2 class="title">Nominované práce</h2>
-        <span v-show="approvedWorks.length === 0">Je tu nějak prázdno</span>
+        <span v-show="works.length === 0">Je tu nějak prázdno</span>
         <div class="block">
           <div
-            v-for="work in approvedWorks"
-            :key="work.ID"
+            v-for="work in works"
+            :key="work.id"
             class="card mt-4 is-clickable activeContestCard columns mx-0"
-            @click="routeToWork(work.ID)"
+            @click="routeToWork(work.id)"
           >
             <p
               class="column is-flex is-justify-content-center is-align-items-center has-text-weight-medium has-text-primary"
@@ -249,15 +249,12 @@ export default {
   name: "ContestPanel",
   data() {
     return {
-      contest: {},
-      works: [],
+      contest: null,
+      works: null,
       isRemoveModalActive: false,
       isModalActive: false,
-      error: false,
       radioButton: "",
       winners: [[], [], []],
-      winnerWorks: [],
-      closed: false,
     };
   },
   methods: {
@@ -266,40 +263,30 @@ export default {
         .dispatch("getContestByID", this.id)
         .then((contest) => {
           this.contest = contest;
+          document.title = `Chytrá palice - ${this.contest.name}`;
         })
         .catch((err) => {
           console.log(err);
           this.$router.push({ path: "/", query: { err: "conNotFound" } });
         });
     },
-    loadContent() {
-      this.contest = this.$store.getters.getContestByID(this.id);
-      if (!this.contest) {
-        this.error = true;
-      } else {
-        this.closed = this.contest.isClosed;
-
-        this.winners = this.contest.winners;
-        this.setWinnerWorks();
-      }
-    },
-    removeContest() {
-      this.$store.dispatch("removeContest", {
+    async fetchWorks() {
+      this.works = await this.$store.dispatch("getAllWorks", {
+        approvedState: "approved",
         contestID: this.id,
       });
-      this.isRemoveModalActive = false;
-      this;
     },
-    setWinnerWorks() {
-      if (!this.closed) return [];
-      this.winnerWorks = this.approvedWorks
-        .filter((work) => this.winners[0].includes(work.ID))
-        .concat(
-          this.approvedWorks.filter((work) => this.winners[1].includes(work.ID))
-        )
-        .concat(
-          this.approvedWorks.filter((work) => this.winners[2].includes(work.ID))
-        );
+
+    async removeContest() {
+      this.$store
+        .dispatch("removeContest", this.id)
+        .then(() => {
+          this.$router.push("/");
+        })
+        .catch((err) => console.log(err));
+    },
+    findWorkByID(workID) {
+      return this.works.filter((work) => work.id == workID)[0];
     },
     removeFromWinners(workID) {
       this.winners.forEach((arr) => {
@@ -307,37 +294,35 @@ export default {
         if (index !== -1) arr.splice(index, 1);
       });
     },
-    // position: 0..first place,1...second etc.
+    // position: 0..first place, 1...second etc.
     moveToWinners(position, workID) {
       this.removeFromWinners(workID);
       this.winners[position].push(workID);
     },
-    formatDate(dateString) {
-      return this.$formateDate(dateString);
-    },
-    setTitle() {
-      if (!this.error) document.title = `Chytrá palice - ${this.contest.name}`;
-    },
-    closeContest() {
+    async closeContest() {
       if (
         this.winners[0].length !== 0 &&
         this.winners[1].length !== 0 &&
         this.winners[2].length !== 0
       ) {
-        this.$store.dispatch("setWinners", {
-          contestID: this.id,
-          winners: this.winners,
-        });
-
-        this.isModalActive = false;
-        this.closed = true;
-        this.$buefy.toast.open({
-          duration: 5000,
-          message: `Soutěž byla uzavřena`,
-          position: "is-top",
-          type: "is-primary",
-        });
-        this.setWinnerWorks();
+        this.$store
+          .dispatch("setWinners", {
+            id: this.id,
+            winners: this.winners,
+          })
+          .then(() => {
+            this.contest.first = this.winners[0];
+            this.contest.second = this.winners[1];
+            this.contest.third = this.winners[2];
+            this.isModalActive = false;
+            this.contest.running = false;
+            this.$buefy.toast.open({
+              duration: 5000,
+              message: `Soutěž byla uzavřena`,
+              position: "is-top",
+              type: "is-primary",
+            });
+          });
       } else {
         this.$buefy.toast.open({
           duration: 5000,
@@ -361,12 +346,10 @@ export default {
     admin() {
       return this.$store.getters.isAdmin;
     },
-    approvedWorks() {
-      return this.works.filter((work) => work.approvedState === "approved");
-    },
   },
   created() {
     this.fetchContest();
+    this.fetchWorks();
   },
 };
 </script>

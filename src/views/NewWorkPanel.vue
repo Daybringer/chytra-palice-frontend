@@ -246,12 +246,15 @@ export default {
           .then((id) => {
             this.$buefy.toast.open({
               duration: 5000,
-              message: `Soutěžní práce byla úspěšně nahrána`,
+              message:
+                "Soutěžní práce byla úspěšně nahrána \n Vyčkejte na přesměrování",
               position: "is-top",
               type: "is-primary",
             });
 
-            this.$router.push(`/prace/${id}`);
+            setTimeout(() => {
+              this.$router.push(`/prace/${id}`);
+            }, 3500);
           })
           .catch((err) => {
             console.log(err);

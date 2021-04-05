@@ -35,65 +35,6 @@ const getters = {
   getToken: (state) => {
     return state.token;
   },
-
-  // getter for the next numeric ID (in posts,contests,works)
-  getNextID: (state) => (category) => {
-    if (state[category].length === 0) {
-      return 0;
-    } else {
-      return state[category][state[category].length - 1].ID + 1;
-    }
-  },
-
-  // Posts
-  getPosts: (state) => {
-    return state.posts;
-  },
-  getPostByID: (state) => (id) => {
-    state.posts.forEach((post) => {
-      if (post.id == id) {
-        return post;
-      }
-    });
-    return null;
-  },
-  // Contests
-  getContests: (state) => {
-    return state.contests;
-  },
-  getContestByID: (state) => (id) => {
-    for (let i = 0; i < state.contests.length; i++) {
-      if (state.contests[i].id == id) {
-        return state.contests[i];
-      }
-    }
-    return null;
-  },
-  // Works & tags
-  getWorks: (state) => {
-    return state.works;
-  },
-  getWorksByAuthor: (state) => (authorEmail) => {
-    const works = [];
-
-    state.works.forEach((work) => {
-      if (work.authorEmail == authorEmail) {
-        works.push(work);
-      }
-    });
-    return works;
-  },
-  getTags: (state) => {
-    return state.tags;
-  },
-  // Comments
-  getCommentCollectionByWorkID: (state) => (workID) => {
-    if (state.comments[workID]) {
-      return state.comments[workID];
-    } else {
-      null;
-    }
-  },
 };
 
 const actions = {
@@ -152,7 +93,7 @@ const actions = {
           // Uploading the actual file
           WorksRepository.uploadDocument(formData, work.id)
             .then(() => {
-              resolve(work);
+              resolve(work.id);
             })
             .catch((err) => {
               console.log(err);
@@ -233,6 +174,16 @@ const actions = {
     });
   },
   // Contests
+  createContest(context, createContestDto) {
+    return new Promise((resolve, reject) => {
+      ContestsRepository.createContest(createContestDto)
+        .then((res) => resolve(res.data.id))
+        .catch((err) => {
+          console.log(err);
+          reject(err);
+        });
+    });
+  },
   getContestByID(context, id) {
     return new Promise((resolve, reject) => {
       ContestsRepository.getContestByID(id)
@@ -245,8 +196,21 @@ const actions = {
       ContestsRepository.getAllContests()
         .then((res) => {
           resolve(res.data);
-          console.log(res.data);
         })
+        .catch((err) => reject(err));
+    });
+  },
+  setWinners(context, setWinnersDto) {
+    return new Promise((resolve, reject) => {
+      ContestsRepository.setWinners(setWinnersDto)
+        .then((res) => resolve(res.data))
+        .catch((err) => reject(err));
+    });
+  },
+  removeContest(context, id) {
+    return new Promise((resolve, reject) => {
+      ContestsRepository.removeContest(id)
+        .then((res) => resolve(res.data))
         .catch((err) => reject(err));
     });
   },
@@ -298,39 +262,6 @@ const actions = {
     commit("addPost", newPost);
     dispatch("savePosts");
   },
-
-  // Contests
-  saveContests({ state }) {
-    window.localStorage.setItem("contests", JSON.stringify(state.contests));
-  },
-
-  createContest(context, createContestDto) {
-    return new Promise((resolve, reject) => {
-      ContestsRepository.createContest(createContestDto)
-        .then((res) => resolve(res.data.id))
-        .catch((err) => {
-          console.log(err);
-          reject(err);
-        });
-    });
-  },
-
-  setWinners({ commit, dispatch }, { contestID, winners }) {
-    commit("setWinners", { contestID, winners });
-    dispatch("saveContests");
-  },
-  removeContest({ commit, dispatch }, { contestID }) {
-    commit("removeContest", { contestID });
-    dispatch("saveContests");
-  },
-
-  addNewTags({ commit, dispatch }, tags) {
-    commit("addNewTags", tags);
-    dispatch("saveTags");
-  },
-  saveTags({ state }) {
-    window.localStorage.setItem("tags", JSON.stringify(state.tags));
-  },
 };
 
 const mutations = {
@@ -349,6 +280,7 @@ const mutations = {
     state.name = name;
     state.email = email;
   },
+  // ------------------------------------------------
   // Dev mutation
   setUser(state, { name, email, admin }) {
     state.name = name;

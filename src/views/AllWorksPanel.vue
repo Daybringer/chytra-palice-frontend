@@ -182,8 +182,6 @@ export default {
               passed = false;
           }
 
-          console.log(this.keywords);
-
           this.keywords.forEach((keyword) => {
             if (!work.keywords.includes(keyword)) passed = false;
           });

@@ -84,8 +84,7 @@ const routes = [
     path: "/prace/:id",
     component: WorkPanel,
     meta: {
-      title: "Chytrá palice - Nahrání práce",
-      is_logged: true,
+      title: "Chytrá palice - ",
     },
   },
   {

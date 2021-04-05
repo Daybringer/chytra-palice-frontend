@@ -196,6 +196,7 @@ export default {
             this.$router.push({ path: "/", query: { err: "conNotFound" } });
           } else {
             this.fetchContest(this.work.contestID);
+            document.title = `Chytrá palice - ${this.work.name}`;
           }
         })
         .catch(() => {
