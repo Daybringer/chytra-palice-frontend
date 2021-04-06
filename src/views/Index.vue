@@ -9,9 +9,20 @@
                 <p class="title">Vertical...</p>
                 <p class="subtitle">Top tile</p>
               </article>
-              <article class="tile is-child notification is-warning">
-                <p class="title">...tiles</p>
-                <p class="subtitle">Bottom tile</p>
+              <article
+                class="tile is-child notification is-warning has-text-centered"
+              >
+                <p class="title">Podcast týdne</p>
+                <iframe
+                  src="https://open.spotify.com/embed-podcast/episode/0g3NJEE1EWAToSTBRptPb9"
+                  width="100%"
+                  height="232"
+                  frameborder="0"
+                  allowtransparency="true"
+                  allow="encrypted-media"
+                  :class="spotifyLoading ? 'spotifyLoading' : ''"
+                  @load="spotifyLoaded()"
+                ></iframe>
               </article>
             </div>
             <div class="tile is-parent">
@@ -53,7 +64,7 @@
         :key="post.id"
         :id="post.id"
         :author="post.author"
-        :date="formatDate(post.date)"
+        :date="new Date(+post.dateAdded).toLocaleDateString('cs')"
         :title="post.title"
         :content="post.content"
       ></post-card>
@@ -65,16 +76,27 @@
 import PostCard from "../components/PostCard.vue";
 export default {
   name: "Index",
-  computed: {
-    posts() {
-      return this.$store.getters.getPosts;
-    },
+  data() {
+    return {
+      spotifyLoading: true,
+      posts: [],
+    };
   },
   components: { PostCard },
   methods: {
+    async fetchPosts() {
+      this.posts = await this.$store.dispatch("getAllPosts");
+    },
     formatDate(dateString) {
       return this.$formateDate(dateString);
     },
+    spotifyLoaded() {
+      this.spotifyLoading = false;
+    },
+  },
+  // FIXME Should just fetch top ten and implement infinite scroll
+  created() {
+    this.fetchPosts();
   },
   mounted() {
     if (this.$route.query.err == "admin") {
@@ -110,4 +132,9 @@ export default {
 };
 </script>
 
-<style scoped></style>
+<style scoped>
+.spotifyLoading {
+  background-color: darkslategrey;
+  border-radius: 0.5rem;
+}
+</style>

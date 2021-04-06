@@ -1,15 +1,15 @@
 <template>
   <div class="container my-6">
-    <post-form :type="'create'"> </post-form>
+    <create-post-form></create-post-form>
   </div>
 </template>
 
 <script>
 // Components
-import PostForm from "../components/PostForm.vue";
+import CreatePostForm from "../components/CreatePostForm.vue";
 export default {
   name: "NewPostPanel",
-  components: { PostForm },
+  components: { CreatePostForm },
 };
 </script>
 

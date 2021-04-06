@@ -5,6 +5,7 @@ const AuthRepository = RepositoryFactory.get("auth");
 const ContestsRepository = RepositoryFactory.get("contests");
 const WorksRepository = RepositoryFactory.get("works");
 const CommentsRepository = RepositoryFactory.get("comments");
+const PostsRepository = RepositoryFactory.get("posts");
 
 const state = () => ({
   admin: false,
@@ -225,6 +226,37 @@ const actions = {
     return new Promise((resolve, reject) => {
       ContestsRepository.updateContest(id, updateContestDto)
         .then(() => resolve(id))
+        .catch((err) => reject(err));
+    });
+  },
+  // Posts
+  createPost(context, { createPostDto, images }) {
+    return new Promise((resolve, reject) => {
+      PostsRepository.createPost(createPostDto).then((res) => {
+        const post = res.data;
+        const formData = new FormData();
+        images.forEach((image) => {
+          formData.append("images", image);
+        });
+        if (images.length !== 0) {
+          PostsRepository.uploadImages(formData, post.id)
+            .then(() => {
+              resolve(post.id);
+            })
+            .catch((err) => {
+              console.log(err);
+              reject(err);
+            });
+        } else {
+          resolve(post.id);
+        }
+      });
+    });
+  },
+  getAllPosts() {
+    return new Promise((resolve, reject) => {
+      PostsRepository.getAll()
+        .then((res) => resolve(res.data))
         .catch((err) => reject(err));
     });
   },

@@ -44,7 +44,6 @@ export default {
         approvedState: "pending",
       });
     },
-
     routeToWork(id) {
       this.$router.push(`/prace/${id}`);
     },
