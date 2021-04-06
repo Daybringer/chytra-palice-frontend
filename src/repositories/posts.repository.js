@@ -16,4 +16,7 @@ export default {
   getAll() {
     return Repository.get(`${resource}`);
   },
+  getPostByID(id) {
+    return Repository.get(`${resource}/${id}`);
+  },
 };
