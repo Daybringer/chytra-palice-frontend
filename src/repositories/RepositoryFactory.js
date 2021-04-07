@@ -4,6 +4,7 @@ import contestsRepository from "./contests.repository";
 import rootRepository from "./root.repository";
 import worksRepository from "./works.repository";
 import postsRepository from "./posts.repository";
+import tilesRepository from "./tiles.repository";
 
 const repositories = {
   auth: authRepository,
@@ -12,6 +13,7 @@ const repositories = {
   works: worksRepository,
   comments: commentsRepository,
   posts: postsRepository,
+  tiles: tilesRepository,
 };
 
 export const RepositoryFactory = {

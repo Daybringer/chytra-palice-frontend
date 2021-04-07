@@ -6,6 +6,7 @@ const ContestsRepository = RepositoryFactory.get("contests");
 const WorksRepository = RepositoryFactory.get("works");
 const CommentsRepository = RepositoryFactory.get("comments");
 const PostsRepository = RepositoryFactory.get("posts");
+const TilesRepository = RepositoryFactory.get("tiles");
 
 const state = () => ({
   admin: false,
@@ -81,6 +82,52 @@ const actions = {
     window.localStorage.setItem("access-token", "");
   },
 
+  // Tiles
+  fetchSpotify() {
+    return new Promise((resolve, reject) => {
+      TilesRepository.getSpotify()
+        .then((res) => {
+          resolve(res.data);
+        })
+        .catch((err) => {
+          reject(err);
+        });
+    });
+  },
+  editSpotify(context, episode) {
+    return new Promise((resolve, reject) => {
+      TilesRepository.setSpotify(episode)
+        .then((res) => {
+          resolve(res.data);
+        })
+        .catch((err) => {
+          reject(err);
+        });
+    });
+  },
+  fetchAktualita() {
+    return new Promise((resolve, reject) => {
+      TilesRepository.getAktualita()
+        .then((res) => {
+          resolve(res.data);
+        })
+        .catch((err) => {
+          reject(err);
+        });
+    });
+  },
+  editAktualita(context, content) {
+    return new Promise((resolve, reject) => {
+      TilesRepository.setAktualita(content)
+        .then((res) => {
+          resolve(res.data);
+        })
+        .catch((err) => {
+          reject(err);
+        });
+    });
+  },
+
   // Works
   createWork(context, { createWorkDto, file }) {
     return new Promise((resolve, reject) => {
@@ -142,6 +189,24 @@ const actions = {
     return new Promise((resolve, reject) => {
       WorksRepository.approveWork(id)
         .then((res) => resolve(res.data))
+        .catch((err) => reject(err));
+    });
+  },
+  fetchNewestWork() {
+    return new Promise((resolve, reject) => {
+      WorksRepository.getNewestWork()
+        .then((res) => {
+          resolve(res.data);
+        })
+        .catch((err) => reject(err));
+    });
+  },
+  fetchPopularWork() {
+    return new Promise((resolve, reject) => {
+      WorksRepository.getPopularWork()
+        .then((res) => {
+          resolve(res.data);
+        })
         .catch((err) => reject(err));
     });
   },

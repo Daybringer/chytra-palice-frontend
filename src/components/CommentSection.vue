@@ -12,7 +12,7 @@
           @removeComment="removeComment"
         />
       </div>
-      <div class="field">
+      <div v-if="isAdmin" class="field">
         <div class="control">
           <b-input
             expanded
@@ -37,7 +37,7 @@
 import CommentBlade from "./CommentBlade.vue";
 export default {
   name: "CommentSection",
-  props: ["workID"],
+  props: ["workID", "isAdmin"],
   components: {
     CommentBlade,
   },

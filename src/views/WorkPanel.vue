@@ -160,7 +160,7 @@
       </div>
     </div>
     <!-- Comment section -->
-    <comment-section :workID="this.id"></comment-section>
+    <comment-section :isAdmin="isAdmin" :workID="this.id"></comment-section>
   </div>
 </template>
 

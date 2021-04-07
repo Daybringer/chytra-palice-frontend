@@ -13,6 +13,12 @@ export default {
       },
     });
   },
+  getNewestWork() {
+    return Repository.get(`${resource}/newest`);
+  },
+  getPopularWork() {
+    return Repository.get(`${resource}/popular`);
+  },
   getWorkByID(id) {
     return Repository.get(`${resource}/${id}`);
   },

@@ -20,6 +20,7 @@ import WorkPanel from "../views/WorkPanel.vue";
 import MyWorksPanel from "../views/MyWorksPanel.vue";
 import ApproveWorksPanel from "../views/ApproveWorksPanel.vue";
 import EditContestPanel from "../views/EditContestPanel.vue";
+import AboutPalice from "../views/AboutPalice.vue";
 
 Vue.use(VueRouter);
 
@@ -29,6 +30,14 @@ const routes = [
     component: Index,
     meta: {
       title: "Chytrá palice - literární soutěž GJK",
+    },
+  },
+
+  {
+    path: "/o-palici",
+    component: AboutPalice,
+    meta: {
+      title: "Chytrá palice - O Chytré palici",
     },
   },
   {
