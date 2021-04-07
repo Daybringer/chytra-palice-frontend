@@ -32,6 +32,7 @@
     <!-- Edit or close modal -->
     <b-modal
       v-model="isComponentModalActive"
+      @remove="remove"
       has-modal-card
       trap-focus
       :destroy-on-hide="false"
@@ -67,6 +68,10 @@ export default {
   methods: {
     linkToPost() {
       this.$router.push({ path: `/clanek/${this.id}` });
+    },
+    remove(id) {
+      console.log("lol");
+      this.$emit("remove", id);
     },
   },
   computed: {

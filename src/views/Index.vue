@@ -126,6 +126,7 @@
     <section class="section pr-0 pl-0">
       <post-card
         v-for="post in posts"
+        @remove="removePost"
         :key="post.id"
         :id="post.id"
         :author="post.author"
@@ -255,6 +256,14 @@ export default {
         this.$store.dispatch("editAktualita", this.modalAktualitaPodcast);
         this.modalAktualitaPodcast = "";
       }
+    },
+    removePost(postID) {
+      console.log(postID, "triggerred");
+      let index;
+      for (let x = 0; x < this.posts.length; x++) {
+        if (this.posts[x] == postID) index = x;
+      }
+      if (index) this.posts.splice(index, 1);
     },
     spotifyLoaded() {
       this.spotifyLoading = false;

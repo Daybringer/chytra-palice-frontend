@@ -318,6 +318,18 @@ const actions = {
       });
     });
   },
+  removePost(context, id) {
+    return new Promise((resolve, reject) => {
+      PostsRepository.removePost(id)
+        .then((res) => {
+          resolve(res.data);
+        })
+        .catch((err) => {
+          console.log(err);
+          reject(err);
+        });
+    });
+  },
   getAllPosts() {
     return new Promise((resolve, reject) => {
       PostsRepository.getAll()
@@ -331,54 +343,6 @@ const actions = {
         .then((res) => resolve(res.data))
         .catch((err) => reject(err));
     });
-  },
-  //-----------------------------------------------------------------------------------------------------------
-  // Posts
-  savePosts({ state }) {
-    window.localStorage.setItem("posts", JSON.stringify(state.posts));
-  },
-  removePost({ dispatch, commit }, id) {
-    commit("removePost", id);
-    dispatch("savePosts");
-  },
-  deleteAllPosts({ commit, dispatch }) {
-    commit("deleteAllPosts");
-    dispatch("savePosts");
-  },
-
-  editPost({ dispatch, commit, getters }, post) {
-    const { id, title, content } = post;
-    // Object copy <= Can't change original object outside of mutations
-    const oldPost = JSON.parse(JSON.stringify(getters.getPostByID(id)));
-    oldPost.title = title.trim();
-    oldPost.content = content.trim();
-    commit("editPost", oldPost);
-    dispatch("savePosts");
-  },
-  newPost({ dispatch, commit, getters }, post) {
-    const { content, title } = post;
-    const date = new Date();
-
-    // TODO may move this to separate function
-    let id;
-    const posts = getters.getPosts;
-    if (posts.length === 0) {
-      id = 0;
-    } else {
-      id = posts[posts.length - 1].id + 1;
-    }
-
-    const newPost = {
-      id,
-      title: title.trim(),
-      author: getters.getName,
-      date,
-      // `${date.getDate()}.${date.getMonth() + 1}.${date.getFullYear()}`
-      content: content.trim(),
-    };
-
-    commit("addPost", newPost);
-    dispatch("savePosts");
   },
 };
 
@@ -404,97 +368,6 @@ const mutations = {
     state.name = name;
     state.email = email;
     state.admin = admin;
-  },
-  addPost(state, post) {
-    state.posts.push(post);
-  },
-  editPost(state, post) {
-    for (let i = 0; i < state.posts.length; i++) {
-      if (state.posts[i].id == post.id) {
-        state.posts.splice(i, 1, post);
-        return;
-      }
-    }
-  },
-  deleteAllPosts(state) {
-    state.posts = [];
-  },
-  removePost(state, id) {
-    for (let i = 0; i < state.posts.length; i++) {
-      if (state.posts[i].id == id) {
-        state.posts.splice(i, 1);
-        return;
-      }
-    }
-  },
-  // Contests
-  addContest(state, contest) {
-    state.contests.push(contest);
-  },
-  addWorkToContest(state, { contestID, work }) {
-    state.contests.forEach((contest) => {
-      if (contest.id === contestID) {
-        contest.nominated.push(work.ID);
-        // Should break here, every() might be better suited
-      }
-    });
-  },
-  setWinners(state, { contestID, winners }) {
-    state.contests.forEach((contest) => {
-      if (contest.id == contestID) {
-        contest.winners = winners;
-        contest.isClosed = true;
-        // Should break here, every() might be better suited
-      }
-    });
-  },
-  removeContest(state, { contestID }) {
-    for (let x = 0; x < state.contests.length; x++) {
-      if (state.contests[x].id == contestID) {
-        state.contests.splice(x, 1);
-        break;
-      }
-    }
-  },
-  // Works & keywords
-  addWork(state, work) {
-    state.works.push(work);
-  },
-  addNewTags(state, tags) {
-    tags.forEach((tag) => {
-      state.tags.push(tag);
-    });
-  },
-  rejectWork(state, { id, quarantorMessage }) {
-    for (let i = 0; i < state.works.length; i++) {
-      if (state.works[i].ID == id) {
-        state.works[i].approvedState = "rejected";
-        state.works[i].quarantorMessage = quarantorMessage;
-        return;
-      }
-    }
-  },
-  approveWork(state, id) {
-    for (let i = 0; i < state.works.length; i++) {
-      if (state.works[i].ID == id) {
-        state.works[i].approvedState = "approved";
-        return;
-      }
-    }
-  },
-  // Comments
-  addComment(state, comment) {
-    if (!state.comments[comment.workID]) state.comments[comment.workID] = [];
-    state.comments[comment.workID].push(comment);
-  },
-  deleteComment(state, { ID, workID }) {
-    let arrayIndex;
-    for (let i = 0; i < state.comments[workID].length; i++) {
-      if (state.comments[workID][i].ID === ID) {
-        arrayIndex = i;
-      }
-    }
-    state.comments[workID].splice(arrayIndex, 1);
   },
 };
 

@@ -5,9 +5,9 @@
         <button class="button is-danger" @click="removePost">
           Odstranit článek
         </button>
-        <button class="button is-primary" @click="pushToEdit">
+        <!-- <button class="button is-primary" @click="pushToEdit">
           Upravit článek
-        </button>
+        </button> -->
       </div>
     </div>
   </div>
@@ -19,18 +19,20 @@ export default {
   props: { id: Number },
   methods: {
     removePost() {
-      this.$store.dispatch("removePost", this.id);
-      this.$buefy.toast.open({
-        duration: 5000,
-        message: `Článek byl smazán`,
-        position: "is-top",
-        type: "is-info",
+      this.$store.dispatch("removePost", this.id).then(() => {
+        this.$buefy.toast.open({
+          duration: 5000,
+          message: `Článek byl smazán`,
+          position: "is-top",
+          type: "is-info",
+        });
+        location.reload(true);
       });
-      this.$emit("close");
     },
-    pushToEdit() {
-      this.$router.push({ path: `/clanek/edit/${this.id}` });
-    },
+    // pushToEdit() {
+    //   this.$router.push({ path: `/clanek/edit/${this.id}` });
+    //   console.log("edit")
+    // },
   },
 };
 </script>

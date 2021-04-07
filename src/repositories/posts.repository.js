@@ -19,4 +19,7 @@ export default {
   getPostByID(id) {
     return Repository.get(`${resource}/${id}`);
   },
+  removePost(id) {
+    return Repository.delete(`${resource}/${id}`);
+  },
 };
