@@ -1,5 +1,5 @@
-import Repository from "@/repositories/Repository";
-import { RepositoryFactory } from "@/repositories/RepositoryFactory";
+import Repository from "../../repositories/Repository.js";
+import { RepositoryFactory } from "../../repositories/RepositoryFactory.js";
 import jwt_decode from "jwt-decode";
 const AuthRepository = RepositoryFactory.get("auth");
 const ContestsRepository = RepositoryFactory.get("contests");

@@ -12,7 +12,7 @@
           @removeComment="removeComment"
         />
       </div>
-      <div v-if="isAdmin" class="field">
+      <div v-if="logged" class="field">
         <div class="control">
           <b-input
             expanded
@@ -37,7 +37,7 @@
 import CommentBlade from "./CommentBlade.vue";
 export default {
   name: "CommentSection",
-  props: ["workID", "isAdmin"],
+  props: ["workID"],
   components: {
     CommentBlade,
   },
@@ -85,6 +85,11 @@ export default {
   },
   created() {
     this.getAllCommentsByWorkID();
+  },
+  computed: {
+    logged() {
+      return this.$store.getters.isLoggedIn;
+    },
   },
   data() {
     return {
